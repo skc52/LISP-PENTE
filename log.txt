@@ -5,3 +5,8 @@ Took me hours to figure out out to perform recursion to create a board and print
 Discovered format function, newline character
 
 Asked user for input..validated input..did coin toss..determined winner
+Worked on setting a piece to desired row and col number
+
+For validation input, could not validate if the row label is strictly numeric
+
+Wrote function to determine row and col indices for the inputted position - parse-position

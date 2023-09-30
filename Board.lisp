@@ -34,5 +34,38 @@
      (format t "~%")
      (print-board (rest board)))))
 
-(let ((pente-board (create-board 20)))
-  (print-board pente-board))
+;; (let ((pente-board (create-board 20)))
+;;   (print-board pente-board))
+
+
+;; write function to set piece to a location
+;; will return the updated row
+;; here row is the entire row and not indexing, and i is the indexing for column
+(defun update-row (row i user-input)
+    (cond 
+        ((= i 0)
+            (cons user-input (rest row))
+        )
+
+        (t
+            (cons (first row) (update-row (rest row) (- i 1) user-input) )
+        )
+    )
+)
+
+(defun update-board (board i j user-input)
+    (cond 
+        ;; if we reach the desired row
+        ((= i 0)
+            ;; get the row 
+            ;; and call the update-row function
+            (cons 
+            (update-row (first board) j user-input) (rest board))
+        )
+        (t
+            (const (first board) (update-board (rest board) (- i 1) j user-input ) )
+        )
+    )
+)
+
+(print (update-board '((0 1 2) (3 4 5)) 0 2 5))

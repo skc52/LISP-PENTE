@@ -1,0 +1,5 @@
+Time - 3 hours
+Sep 30
+To print the board...encountered so many errors, learned how to format the output
+Took me hours to figure out out to perform recursion to create a board and print the board 
+Discovered format function, newline character

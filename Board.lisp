@@ -4,7 +4,7 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
+             (list 'O 'O 'O 'O 'O 'W 'W 'W 'W 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
 
 (defun create-board (n)
   (cond 
@@ -34,8 +34,7 @@
      (format t "~%")
      (print-board (rest board)))))
 
-;; (let ((pente-board (create-board 20)))
-;;   (print-board pente-board))
+
 
 
 ;; write function to set piece to a location
@@ -54,18 +53,28 @@
 )
 
 (defun update-board (board i j user-input)
+    ;; check if within bound both row and column
     (cond 
-        ;; if we reach the desired row
-        ((= i 0)
-            ;; get the row 
-            ;; and call the update-row function
-            (cons 
-            (update-row (first board) j user-input) (rest board))
+        ((not (or (<= 0 i 18) (<= 1 j 19)))
+            (print "Row or column not within bounds")
+            ()
         )
-        (t
-            (const (first board) (update-board (rest board) (- i 1) j user-input ) )
+        (t 
+            (cond 
+                ;; if we reach the desired row
+                ((= i 0)
+                    ;; get the row 
+                    ;; and call the update-row function
+                    (cons 
+                    (update-row (first board) j user-input) (rest board))
+                )
+                (t
+                    (cons (first board) (update-board (rest board) (- i 1) j user-input ) )
+                )
+            )
         )
     )
+    
 )
 
 ;; function to ask for user input on the position
@@ -159,11 +168,11 @@
         (cond 
             ((<= (char-code #\a) (char-code col-label)  (char-code #\s))
                 ;; assign (char-code col-label)-(char-code #\a) to i ;; convert row to numeric type 
-                (append (list (+ (- (char-code col-label) (char-code #\a)) 1)) (list (parse-integer row-label)))
+                (append (list (+ (- (char-code col-label) (char-code #\a)) 1)) (list (- (parse-integer row-label) 19)))
             )
             (t
                 ;; assign (char-code col-label)-(char-code #\a) to i ;; convert row to numeric type 
-                (append (list (+ (- (char-code col-label) (char-code #\A)) 1)) (list (parse-integer row-label)))
+                (append (list (+ (- (char-code col-label) (char-code #\A)) 1)) (list (- (parse-integer row-label) 19)))
             )
         )     
     )
@@ -174,3 +183,80 @@
 ;; (ask-user-position-input)
 
 ;; (print (update-board '((0 1 2) (3 4 5)) 0 2 5))
+
+;; returns the value at the specified column of the provided row
+(defun get-col (row j) 
+    (cond 
+    
+        ((= j 0)
+            (first row)
+        )
+        (t 
+            (get-col (rest row) (- j 1))
+        )
+    )
+)
+
+;; function to get the color at row = i and col = j
+(defun get-color (board i j)
+    (cond 
+            ;; if we reach the desired row
+        ((= i 0)
+            ;; get the row 
+            ;; and call the update-row function
+            
+            (get-col (first board) j) 
+        )
+        (t
+            (get-color (rest board) (- i 1) j ) 
+        )
+    )
+
+)
+
+;; function to check for 4 consecutive piece and return its count
+(defun check-for-four (board piece-color)
+   (+ (check-horizontal board piece-color 4 0) (+ (check-vertical board piece-color 4 0)  (+ (check-backward board piece-color 4 0)  (check-forward board piece-color 4 0) )))
+)
+
+;; function to check for 5 consecutive piece
+(defun check-for-five (board piece-color)
+
+)
+
+;; function to check for two consecutive 
+(defun check-for-pairs (board own-color opponent-color)
+
+)
+
+;; function to capture the pairs..set those positions back to O
+(defun capture-pairs (board own-color opponent-color)
+    
+)
+
+
+(defun consecutive (board color count x y dx dy)
+   (cond
+        ((= count 0)
+            t
+        )
+        (t
+            (cond 
+                ((equal (get-color board x y) color)
+                    (consecutive board color (- count 1) (+ x dx) (+ y dy) dx dy)
+                )
+                (t 
+                    ()
+
+                )
+            )
+        )
+    )
+)
+; Example usage:
+(let ((pente-board (create-board 20)))
+   
+  ; (print-board pente-board)
+;;   (print (get-color pente-board 19 2))
+    (print (consecutive pente-board (first '(W)) 4 3 8 1 -1))
+)

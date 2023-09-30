@@ -10,3 +10,7 @@ Worked on setting a piece to desired row and col number
 For validation input, could not validate if the row label is strictly numeric
 
 Wrote function to determine row and col indices for the inputted position - parse-position
+
+Wrote functions to get the color from row = i and col = j in the board 
+
+added bounds checking in update board

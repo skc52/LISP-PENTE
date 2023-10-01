@@ -15,24 +15,46 @@
 
 (defun print-row (row)
   (cond 
-    ((null row)
-     nil)
-    (t 
-    ;; print the first value of the list row with a space afterwards
-    ;; t is the output stream
-     (format t "~a " (first row))
-     (print-row (rest row)))))
+        ((null row)
+            nil
+        )
+        (t 
+        ;; print the first value of the list row with a space afterwards
+        ;; t is the output stream
+            
+            ;;  (cond 
+            ;;     ((not (equal (first row) (first '(X))))
+            ;;         (cond 
+            ;;             ((<= 1 (parse-integer (first row)) 9)
+            ;;                     (print " ")
+                            
+            ;;             )
+
+            ;;         )
+            ;;     )
+                
+            ;; )
+            (format t "~a " (first row))
+            (print-row (rest row))
+        )
+    )
+)
 
 (defun print-board (board)
   (cond
-    ((null board)
-     nil)
-    (t 
-     (print-row (first board))
+        ((null board)
+            nil
+        )
+        (t 
+           
+            (print-row (first board))
 
-    ;;  print a new line character
-     (format t "~%")
-     (print-board (rest board)))))
+            ;;  print a new line character
+            (format t "~%")
+            (print-board (rest board))
+        )
+    )
+)
 
 
 

@@ -43,6 +43,7 @@
 ;; will return round list
 ;; (board (hPrevscores cPrevscores) (human-color computer-color) (hCpairs, cCpairs) (hFourCons cFourCons) (hFiveCons cFiveCons) )
 (defun start-round (hPrevscores cPrevscores)
+    (print "STARTING THE ROUND------------------------------------------------------------------------------")
     ;; create a new board
     ;; ask human to call the toss if hPrevscores and cPrevscores are equal
     ;; toss coin
@@ -70,8 +71,8 @@
 
     ;; call playGame function
     ;; will return the round list when game terminates
-    
-    (playgame (update-board board  10 10 (first '(W))) (first colors) (rest colors) (first '(B)) 1 0 0 0 0)
+    ;; White starts at j10 always
+    (playgame (update-board board  10 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0)
 
     ;; determine 4 cons
     ;; calculate total scores for both
@@ -89,9 +90,14 @@
     ;; check if input is empty
     ;; if empty put the piece in the position
     ;; pass the turn
+    (print "---------------------------------------------------------------------------------------")
     (terpri)
     (print-board board)
     (terpri)
+    (print-stats-during-game hColor cColor playingColor hCPScore cCPScore)
+    (print "---------------------------------------------------------------------------------------")
+    (terpri)
+
     (let* (
             (nextColor 
                 (cond 
@@ -104,20 +110,30 @@
                 )
             )
             (position (parse-position (first (ask-and-validate))));; col and row
+            (input-x (first (rest position)))
+            (input-y (first position))
             ;; check if position is empty
             (isEmpty (equal (get-color board (first (rest position))  (first position)) (first '(O))))
         )
         ;; print the board at the start of each game iteration
         
-        (cond 
+        (cond
+
+            ((and (equal turn 2) (not (or (or (<= 4  (- input-x 10) 18) (<= -18 (- input-x 10) -4)) (or (<= 4  (- input-y 10) 18) (<= -18 (- input-y 10) -4)))) ) 
+                (print "Cannot put within 3 steps in 2nd turn of White. Enter new position")
+                (terpri)
+                (playGame board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore)
+            ) 
             ((not isEmpty)
+                (print "Position is not empty. Put somewhere else")
+                (terpri)
                 (playGame board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore)
             )
             ;; is empty then update the board
             (t 
                 ;; check for captured pairs
                 ;; check for 5 cons
-                (playgame (update-board board  (first (rest position)) (first position) playingColor) hColor cColor nextColor (+ turn 1) hCPScore cCPScore hFiveScore cFiveScore)
+                (playgame (update-board board  input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCPScore cCPScore hFiveScore cFiveScore)
             )
         )
 
@@ -145,4 +161,30 @@
     )
 )
 
-(start-round 0 0)
+(defun print-stats-during-game(hColor cColor currentColor hCPScores cCPScores)
+    (princ "Human is ")
+    (princ hColor)
+    (terpri)
+    (princ "Computer is ")
+    (princ cColor)
+    (terpri)
+    (princ "Human Captured Pairs: ")
+    (princ hCPScores)
+    (terpri)
+    (princ "Computer Captured Pairs: ")
+    (princ cCPScores)
+    (terpri)
+
+    (cond 
+        ((equal hColor currentColor)
+            (princ "Current Player: Human")
+            (terpri)
+        )
+        (t 
+            (princ "Current Player: Computer")
+            (terpri)
+        )
+    )
+
+)
+(start-round 1 0)

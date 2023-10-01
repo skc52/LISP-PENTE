@@ -49,6 +49,7 @@ Did the same for 4 consecutive as well, 3 as well, havenot checked for them yet 
 
 wrote frunction to start the round and play game...added implemnetation to change turn, colors
 
+added code to check for 3 intersections away in the 2nd turn in the playgame function
 
 
 

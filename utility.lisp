@@ -248,11 +248,11 @@
 
 ;; this function will be used to determine the total number of 4 consecutives once the round is over
 (defun total-four-consecutive (pente-board color)
-    (+ (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0) (
-        + (sum-consecutive-forwardLower pente-board (first '(W)) 4 15 19 15 19 1 -1 0) (
-            + (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0) (
-                + (sum-consecutive-backwardLower pente-board (first '(W)) 4 15 1 15 1 1 1 0) (
-                    + (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0) (sum-consecutive-col pente-board (first '(W)) 4 0 1 1 0 0)
+    (+ (sum-consecutive-forwardUpper pente-board color 4 0 18 0 18 1 -1 0) (
+        + (sum-consecutive-forwardLower pente-board color 4 15 19 15 19 1 -1 0) (
+            + (sum-consecutive-backwardUpper pente-board color 4 0 2 0 2 1 1 0) (
+                + (sum-consecutive-backwardLower pente-board color 4 15 1 15 1 1 1 0) (
+                    + (sum-consecutive-row pente-board color 4 0 1 0 1 0) (sum-consecutive-col pente-board color 4 0 1 1 0 0)
                 )
             )
         )

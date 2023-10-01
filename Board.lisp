@@ -4,7 +4,7 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'W 'O 'W 'W 'W 'W )))))
+             (list 'O 'O 'O 'O 'O 'B 'B 'O 'O 'O 'O 'O 'O 'W 'O 'O 'O 'O 'O )))))
 
 (defun create-board (n)
   (cond 
@@ -272,29 +272,29 @@
 
 
 ; Example usage:
-;; (let ((pente-board (create-board 20)))
+(let ((pente-board (create-board 20)))
 
-(let ((pente-board '(
-     ( O O W W W W O W W W W O O O O O O O O O)
-     ( O O O B B W W O O O O O O O O O O O O O)
-     ( O O O B W B W O W O O O O O O O O O O O)
-     ( O O O W O O W O O W O O O O O O O O O O)
-     ( O O W O O B W O O O W O O O O O O O O O)
-     ( O O O O O O O O O O O O O O O O O O O O)
-     ( O O O O O O O O O O O O O O O O O O O O)
-     ( O O O W W W W O O O O W O O O O O O O O)
-     ( O O O O O O O O O O B O O O O O O O O O)
-     ( O O O O O O O O O B O W O O O O O O O O)
-     ( O O W O O O O O W O W O W O O O O O O O)
-     ( O O W O O O O W O O O W O O O O O O O O)
-     ( B O W B O O B O W W W O W O O O O O O O)
-     ( O W W W O O O O O O O W O O O B O O O O)
-     ( O O W W W O O O O O B O W W W W O O O O)
-     ( O O O O W W B O O O O O O W O O O O O O)
-     ( O O W W W O O O O O O O O O W O O O O O)
-     ( O W O W O W O O O O W W B O O W O O O O)
-     ( B O O B O O B O O O O O O O O O O O O O)
-    )))
+;; (let ((pente-board '(
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;      ( O O O O O O O O O O O O O O W O W W W W)
+;;     )))
    
 
 ;; (defun sum-consecutive-col (board color count x y dx dy sum)
@@ -306,8 +306,8 @@
         ;; (print (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0))
 
     ;; (print (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0))
-
-    ;; (print (total-four-consecutive pente-board (first '(W))))
+    (print pente-board)
+    (print (total-four-consecutive pente-board (first '(B))))
     ;; (print (get-color pente-board 18 ))
     ;; (print (capture-pair pente-board 11 13 1 -1 (first '(B)) (first '(W))))
     ;; (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))

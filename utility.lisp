@@ -380,7 +380,7 @@
             ((>= consecutive-ctr  4)
 
             
-                (list (list left right))
+                (list (list left right dx dy))
             )
             (t 
                 ()
@@ -393,10 +393,13 @@
 ;; function to determine 5 consecutive true?
 ;; call five-possible for all 4 directions and if the length of the list is greater than 0, then 5 conse is true
 
-;; ((1 1) (1 0) (1 0) (1 0)) 
+;; element of the following list is in the format (left right dx dy)
+;; ((1 1 0 1) (1 0 1 0) (1 0 1 -1))
 ;; will return something like above
 ;; this means for direction 0 1 , left horizontal returned true for 5 consecutive and right return false for 5 consecutive
-;; horizontal vertical backward forward
+;; 
+
+;; if length of the list is zero then this means 5 cons is not possible for that given position
 (defun five-consecutive (board x y color)
    (append (five-possible board x y 0 1 color) (
         append (five-possible board x y 1 0 color) (
@@ -404,4 +407,113 @@
             )
    ) )
 )
+
+
+;; using the concept from above
+;; function to determine if in a given position and in the given direction, if 4 cons is possible if i place
+;; my piece there
+;; if it is possible return a list (left , right)
+;; where left == 1 means that 4 consecutive is possible in left part of the given direction
+;; and right == 1 means that it is possible in the right part of the given direction
+
+(defun four-possible (board x y dx dy color)
+    (let* (
+        (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+        (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+        (left (cond 
+            ((>= consecutive-ctr-left 3)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+        (right (cond 
+            ((>= consecutive-ctr-right 3)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+            
+        (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
+
+
+        )
+
+        
+
+    (cond 
+            ((>= consecutive-ctr  3)
+
+            
+                (list (list left right dx dy))
+            )
+            (t 
+                ()
+            )
+
+    )
+    )
+)
+
+(defun four-consecutive (board x y color)
+   (append (four-possible board x y 0 1 color) (
+        append (four-possible board x y 1 0 color) (
+            append (four-possible board x y 1 1 color) (four-possible board x y 1 -1 color)
+            )
+   ) )
+)
+
+(defun three-possible (board x y dx dy color)
+    (let* (
+        (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+        (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+        (left (cond 
+            ((>= consecutive-ctr-left 2)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+        (right (cond 
+            ((>= consecutive-ctr-right 2)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+            
+        (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
+
+
+        )
+
+        
+
+    (cond 
+            ((>= consecutive-ctr  2)
+
+            
+                (list (list left right dx dy))
+            )
+            (t 
+                ()
+            )
+
+    )
+    )
+)
+
+(defun three-consecutive (board x y color)
+   (append (three-possible board x y 0 1 color) (
+        append (three-possible board x y 1 0 color) (
+            append (three-possible board x y 1 1 color) (three-possible board x y 1 -1 color)
+            )
+   ) )
+)
+
 

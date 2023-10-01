@@ -241,7 +241,7 @@
 
 (let ((pente-board '(
      ( O O W W W W O W W W W O O O O O O O O O)
-     ( O O O B B W W W O O O O O O O O O O O O)
+     ( O O O B B W W O O O O O O O O O O O O O)
      ( O O O B W B W O W O O O O O O O O O O O)
      ( O O O W O O W O O W O O O O O O O O O O)
      ( O O W O O B W O O O W O O O O O O O O O)

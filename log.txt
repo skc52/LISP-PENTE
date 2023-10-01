@@ -39,7 +39,9 @@ Oct 1
 
 wrote functions to check for pairs, capture pairs, and get the capture count for a particular x and y, utilized gte-color function already
 defined in board.lisp
-
+wrote functions to determine consecutive count in each direction of a given position 
+wrote function to check if 5 consecutive is possible in a given direction utilizing the above written function
+wrote function to return the list of directions where 5 consecutive is possible
 
 
 

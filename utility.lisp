@@ -246,6 +246,7 @@
     )
 )
 
+;; this function will be used to determine the total number of 4 consecutives once the round is over
 (defun total-four-consecutive (pente-board color)
     (+ (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0) (
         + (sum-consecutive-forwardLower pente-board (first '(W)) 4 15 19 15 19 1 -1 0) (
@@ -292,7 +293,7 @@
             ()
         )
         ( (and (check-pair board x y dx dy own-color opponent-color) (equal (get-color board (+ x (* dx 3)) (+ y (* dy 3))) own-color) )
-            '((dx dy))
+            (list (list dx dy))
         )
         (t 
             ()
@@ -325,5 +326,82 @@
 (defun determine-capture-count (board x y own-color opponent-color)
     (length (check-and-capture-pairs board x y own-color opponent-color))
 
+)
+
+
+;; function to determine counsecutive count in a direction
+(defun determine-consecutive-count (board x y dx dy color ctr)
+
+    (cond 
+        ((not (and (<= 0 (+ x dx) 18) (<= 1 (+ y dy) 19)))
+            (list ctr)
+        )
+        ((equal (get-color board (+ x dx) (+ y dy)) color) 
+            (determine-consecutive-count board (+ x dx) (+ y dy) dx dy color (+ ctr 1))
+        )
+        (t 
+            (list ctr)
+        )
+    )
+)
+
+;; function to determine if 5 consecutive is possible in a direction?
+;; return the list of directions as in dx and -dx if true else empty list
+
+(defun five-possible (board x y dx dy color)
+    (let* (
+        (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+        (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+        (left (cond 
+            ((>= consecutive-ctr-left 4)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+        (right (cond 
+            ((>= consecutive-ctr-right 4)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+            
+        (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
+
+
+        )
+
+        
+
+    (cond 
+            ((>= consecutive-ctr  4)
+
+            
+                (list (list left right))
+            )
+            (t 
+                ()
+            )
+
+    )
+    )
+)
+
+;; function to determine 5 consecutive true?
+;; call five-possible for all 4 directions and if the length of the list is greater than 0, then 5 conse is true
+
+;; ((1 1) (1 0) (1 0) (1 0)) 
+;; will return something like above
+;; this means for direction 0 1 , left horizontal returned true for 5 consecutive and right return false for 5 consecutive
+;; horizontal vertical backward forward
+(defun five-consecutive (board x y color)
+   (append (five-possible board x y 0 1 color) (
+        append (five-possible board x y 1 0 color) (
+            append (five-possible board x y 1 1 color) (five-possible board x y 1 -1 color)
+            )
+   ) )
 )
 

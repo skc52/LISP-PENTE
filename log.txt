@@ -1,4 +1,4 @@
-Time - 3 hours
+Time - 10 hours
 Sep 30
 To print the board...encountered so many errors, learned how to format the output
 Took me hours to figure out out to perform recursion to create a board and print the board 
@@ -21,3 +21,52 @@ that we wanna look for is provided in count parameter
 
 added function to determine the total number of horizontal consecutives, vertical, backward digonal and forward diagonal
 wrote function to give me the total number of 4 consecutives
+
+explanation of the consecutive sum code
+
+for horizontal, recursively check every row for horizontal and increase sum if found 
+same for vertical, every col 
+
+for backward diagonal, start from 15 row 1 column, go upto 0row 1 col 
+then continue from 0 row 2 col upoto 0 row 16 col 
+
+for forward diagonal, start from 15 fow 19 column, go upto 0 row 19 col,
+then continue from 0 row 18 col upto 0 row 4 column
+
+//------------------------------------------------------------------------------------------------------------------------
+Time-
+Oct 1
+
+wrote functions to check for pairs, capture pairs, and get the capture count for a particular x and y, utilized gte-color function already
+defined in board.lisp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

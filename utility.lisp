@@ -1,3 +1,7 @@
+
+
+
+
 ;; this file will have all utility functions
 
 ;; (+ (check-horizontal board piece-color 4) (+ (check-vertical board piece-color 4)  (+ (check-backward board piece-color 4)  (check-forward board piece-color 4) )))
@@ -15,8 +19,7 @@
         (t
             (cond
                 ((not (and (<= 0 x 18) (<= 1 y 19)))
-                    (print "Out of bound")
-                    (terpri)
+                    
                     ()
                 )
                 (t
@@ -254,3 +257,73 @@
         )
     )) 
 )
+
+;returns t if true
+(defun check-pair (board x y dx dy own-color opponent-color)
+    ;; in the given direction check if the next two are opponent-color
+    ;; also do bound checkinh
+    (cond
+        ((not (and (<= 0 (+ x dx) 18) (<= 1 (+ y dy) 19) ))
+            ()
+        )
+         ((not (and (<= 0 (+ x (* dx 2)) 18) (<= 1 (+ y (* dy 2)) 19) ))
+            ()
+        )
+        ( (and (equal (get-color board (+ x dx) (+ y dy)) opponent-color) (equal (get-color board (+ x (* dx 2)) (+ y (* dy 2))) opponent-color))
+            t
+        )
+        (t 
+            ()
+        )
+    )
+)
+
+; will return direction if opponent pairs are present in the given direction
+;; make sure return in thr form ((dx, dy))
+;; so when appending in check-pairs (dx,dy) can be still a unit
+(defun capture-pair (board x y dx dy own-color opponent-color)
+    ;; in the given direction check if the next two are opponent-color and the third is own
+    ;; also do bound checkinh
+            
+
+    (cond
+        
+        ((not (and (<= 0 (+ x (* dx 3)) 18) (<= 1 (+ y (* dy 3)) 19) ))
+            ()
+        )
+        ( (and (check-pair board x y dx dy own-color opponent-color) (equal (get-color board (+ x (* dx 3)) (+ y (* dy 3))) own-color) )
+            '((dx dy))
+        )
+        (t 
+            ()
+        )
+    )
+)
+
+
+;; now check for pairs to capture for a particular row and column
+;; return an array of directions indicating pairs to capture
+;; check in every direction , 8 directions
+(defun check-and-capture-pairs (board x y  own-color opponent-color)
+    (append (capture-pair board x  y 0 1 own-color opponent-color) (
+        append (capture-pair board x  y 0 -1 own-color opponent-color) (
+            append (capture-pair board x  y 1 0 own-color opponent-color) (
+                append (capture-pair board x  y -1 0 own-color opponent-color) (
+                    append (capture-pair board x  y 1 1 own-color opponent-color) (
+                        append (capture-pair board x  y -1 -1 own-color opponent-color) (
+                            append (capture-pair board x  y 1 -1 own-color opponent-color) (capture-pair board x  y -1 1 own-color opponent-color)
+                        )
+                    )
+                )
+            )
+        )
+    ) )
+)
+
+;; get the sum of capture counts for a particular x and y
+;; it is gonna be the lenth of the list of directions returned by check and capture
+(defun determine-capture-count (board x y own-color opponent-color)
+    (length (check-and-capture-pairs board x y own-color opponent-color))
+
+)
+

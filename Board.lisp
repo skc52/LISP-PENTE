@@ -248,17 +248,17 @@
      ( O O O O O O O O O O O O O O O O O O O O)
      ( O O O O O O O O O O O O O O O O O O O O)
      ( O O O W W W W O O O O W O O O O O O O O)
-     ( O O O O O O O O O O O O O O O O O O O O)
-     ( O O O O O O O O O W O O O O O O O O O O)
-     ( O O W O O O O O W O O O O O O O O O O O)
-     ( O O W O O O O W O O O O O O O O O O O O)
-     ( O O W O O O W O O O O O O O O O O O O O)
-     ( O O W O O O O O O O O O O O O B O O O O)
-     ( O O O O O O O O O O O O W W W W O O O O)
+     ( O O O O O O O O O O B O O O O O O O O O)
+     ( O O O O O O O O O B O W O O O O O O O O)
+     ( O O W O O O O O W O W O W O O O O O O O)
+     ( O O W O O O O W O O O W O O O O O O O O)
+     ( B O W B O O B O O O O O W O O O O O O O)
+     ( O W W W O O O O O O O W O O O B O O O O)
+     ( O O W W W O O O O O B O W W W W O O O O)
      ( O O O O W W B O O O O O O W O O O O O O)
-     ( O O O W O O O O O O O O O O W O O O O O)
-     ( O O O W O O O O O O O O O O O W O O O O)
-     ( O O O B O O O O O O O O O O O O O O O O)
+     ( O O W W W O O O O O O O O O W O O O O O)
+     ( O W O W O W O O O O O O O O O W O O O O)
+     ( B O O B O O B O O O O O O O O O O O O O)
     )))
    
 
@@ -272,6 +272,9 @@
 
     ;; (print (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0))
 
-    (print (total-four-consecutive pente-board (first '(W))))
+    ;; (print (total-four-consecutive pente-board (first '(W))))
+    ;; (print (get-color pente-board 18 ))
+    ;; (print (capture-pair pente-board 11 13 1 -1 (first '(B)) (first '(W))))
+    (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))
 
 )

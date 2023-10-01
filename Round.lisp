@@ -72,7 +72,8 @@
     ;; call playGame function
     ;; will return the round list when game terminates
     ;; White starts at j10 always
-    (playgame (update-board board  10 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0)
+
+    (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0)
 
     ;; determine 4 cons
     ;; calculate total scores for both
@@ -90,11 +91,8 @@
     ;; check if input is empty
     ;; if empty put the piece in the position
     ;; pass the turn
-    (print "---------------------------------------------------------------------------------------")
-    (terpri)
     (print-board board)
     (terpri)
-    (print-stats-during-game hColor cColor playingColor hCPScore cCPScore)
     (print "---------------------------------------------------------------------------------------")
     (terpri)
 
@@ -119,7 +117,7 @@
         
         (cond
 
-            ((and (equal turn 2) (not (or (or (<= 4  (- input-x 10) 18) (<= -18 (- input-x 10) -4)) (or (<= 4  (- input-y 10) 18) (<= -18 (- input-y 10) -4)))) ) 
+            ((and (equal turn 2) (not (or (or (<= 4  (- input-x 9) 18) (<= -18 (- input-x 9) -4)) (or (<= 4  (- input-y 10) 18) (<= -18 (- input-y 10) -4)))) ) 
                 (print "Cannot put within 3 steps in 2nd turn of White. Enter new position")
                 (terpri)
                 (playGame board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore)
@@ -131,14 +129,101 @@
             )
             ;; is empty then update the board
             (t 
-                ;; check for captured pairs
-                ;; check for 5 cons
-                (playgame (update-board board  input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCPScore cCPScore hFiveScore cFiveScore)
+                ;; check for captured pairs, if 5 then return
+                
+                ;; check for 5 cons, if true then return
+                (let* 
+                    (
+                        (capture-dir-list (check-and-capture-pairs board input-x input-y playingColor nextColor))
+                        (captured-board (check-capture-update board capture-dir-list input-x input-y playingColor nextColor))
+                        (hCapScores (cond 
+                                ((and (equal playingColor hColor))
+                                    (+ hCPScore (length capture-dir-list))
+                                )
+                                (t
+                                    hCPScore
+                                )
+                               
+                            )
+                        )
+
+                        (cCapScores (cond 
+                                ((and (equal playingColor cColor))
+                                    (+ cCPScore (length capture-dir-list))
+                                )
+                                (t 
+                                    cCPScore
+                                )
+                            )
+
+
+                        )
+
+                    )
+                        (print "---------------------------------------------------------------------------------------")
+                        (terpri)
+
+                        (print-stats-during-game hColor cColor playingColor hCapScores cCapScores)
+
+                    (playgame (update-board captured-board input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCapScores cCPScore hFiveScore cFiveScore)
+                )
             )
         )
 
 
     )
+    
+
+)
+
+;; captures the pairs for real
+(defun capture-pairs-real (board x y capture-dir-list length-list)
+    (let*
+        (
+            (dx 
+                (cond 
+                    ((not (equal length-list 0))
+                        (first (first capture-dir-list))
+                    )
+                    (t
+                        0
+                    )
+                )
+            )
+            
+            (dy 
+                (cond 
+                    ((not (equal length-list 0))
+                        (first (rest (first capture-dir-list)))
+                    )
+                    (t
+                        0
+                    )
+                )
+            )
+        )    
+    
+        (cond
+            ((equal length-list 0)
+                board
+            )
+            (t
+                ;; board
+                (capture-pairs-real (update-board (update-board board (+ x (* 2 dx )) (+ y (* 2 dy)) (first '(O))) (+ x dx) (+ y dy) (first '(O)) ) x y (rest capture-dir-list) (- 1 length-list))
+            )
+            
+        )
+
+    )
+)
+
+
+
+(defun check-capture-update ( board capture-dir-list input-x input-y playingColor nextColor)
+    
+        
+
+    (capture-pairs-real board input-x input-y capture-dir-list  (length capture-dir-list))
     
 
 )
@@ -177,11 +262,11 @@
 
     (cond 
         ((equal hColor currentColor)
-            (princ "Current Player: Human")
+            (princ "Next Player: Computer")
             (terpri)
         )
         (t 
-            (princ "Current Player: Computer")
+            (princ "Next Player: Human")
             (terpri)
         )
     )

@@ -51,6 +51,8 @@ wrote frunction to start the round and play game...added implemnetation to chang
 
 added code to check for 3 intersections away in the 2nd turn in the playgame function
 
+added code in playgame that actually captures the pairs and also updates the capture count
+
 
 
 

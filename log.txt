@@ -47,6 +47,9 @@ wrote function to return the list of directions where 5 consecutive is possible
 
 Did the same for 4 consecutive as well, 3 as well, havenot checked for them yet TODO
 
+wrote frunction to start the round and play game...added implemnetation to change turn, colors
+
+
 
 
 

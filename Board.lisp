@@ -77,6 +77,22 @@
     
 )
 
+;; (defun update-and-print-board (board i j user-input)
+
+;;     (let* (
+;;         (updated-board (update-board board i j user-input))
+;;     ) 
+
+
+;;     (terpri)
+;;     (print-board updated-board)
+;;     (terpri)
+
+;;     )
+
+    
+;; )
+
 ;; function to ask for user input on the position
 (defun ask-user-position-input ()
     (format t "Enter the position where you want to put your piece. Follow the format A10, K1, etc~%")
@@ -84,12 +100,18 @@
         (format t "You entered ~a" user-choice)           
     
 
-        ;; check if input position is valid
-        (cond 
-            ((not (validate-user-input user-choice))
-                (ask-user-position-input)
-            )
-        )
+        ;; ;; check if input position is valid
+        ;; (cond 
+        ;;     ((not (validate-user-input user-choice))
+        ;;         (ask-user-position-input)
+        ;;     )
+        ;;     (t
+
+        ;;     )
+        ;; )
+
+        ;; return userschoice
+        user-choice
     )
 
 )
@@ -113,7 +135,11 @@
             (terpri)
             ()
         )
-        
+        ((< input-length 2)
+            (print "Input Length cannot be more than 3. ")
+            (terpri)
+            ()
+        )
         (t 
         ;; if invalid row
             (cond 
@@ -152,7 +178,7 @@
    )    
 )
 
-
+;; return ((col label), (rowlabel))
 (defun parse-position (position-input)
     ;; determine row label and column label
     ;; convert both to indexing i and j
@@ -168,16 +194,16 @@
         (cond 
             ((<= (char-code #\a) (char-code col-label)  (char-code #\s))
                 ;; assign (char-code col-label)-(char-code #\a) to i ;; convert row to numeric type 
-                (append (list (+ (- (char-code col-label) (char-code #\a)) 1)) (list (- (parse-integer row-label) 19)))
+                (append (list (+ (- (char-code col-label) (char-code #\a)) 1) (- 19 (parse-integer row-label))))
             )
             (t
                 ;; assign (char-code col-label)-(char-code #\a) to i ;; convert row to numeric type 
-                (append (list (+ (- (char-code col-label) (char-code #\A)) 1)) (list (- (parse-integer row-label) 19)))
+                (append (list (+ (- (char-code col-label) (char-code #\A)) 1) (- 19 (parse-integer row-label))))
             )
         )     
     )
 )
-
+(print (parse-position "b2"))
 ;; (validate-user-input "A10")
 
 ;; (ask-user-position-input)
@@ -219,20 +245,7 @@
    (+ (check-horizontal board piece-color 4 0) (+ (check-vertical board piece-color 4 0)  (+ (check-backward board piece-color 4 0)  (check-forward board piece-color 4 0) )))
 )
 
-;; function to check for 5 consecutive piece
-(defun check-for-five (board piece-color)
 
-)
-
-;; function to check for two consecutive 
-(defun check-for-pairs (board own-color opponent-color)
-
-)
-
-;; function to capture the pairs..set those positions back to O
-(defun capture-pairs (board own-color opponent-color)
-    
-)
 
 
 
@@ -278,6 +291,6 @@
     ;; (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))
     ;; (print (determine-consecutive-count pente-board 12 11 0 1 (first '(W)) 0))
     ;; (print  (five-possible pente-board 0 6 0 1 (first '(W))))
-    (print (five-consecutive pente-board 0 6 (first '(W))))
+    ;; (print (five-consecutive pente-board 0 6 (first '(W))))
 
 )

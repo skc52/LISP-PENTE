@@ -4,7 +4,7 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'O 'W 'W 'W 'W 'O 'O 'O 'W 'W 'W 'W 'O 'O )))))
+             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'W 'O 'W 'W 'W 'W )))))
 
 (defun create-board (n)
   (cond 
@@ -237,9 +237,41 @@
 
 
 ; Example usage:
-(let ((pente-board (create-board 20)))
+;; (let ((pente-board (create-board 20)))
+
+(let ((pente-board '(
+     ( O O O O O O O O O O O O O O O O O O O O)
+     ( O O O B B O O O O O O O O O O O O O O O)
+     ( O O O B O B O O O O O O O O O O O O O O)
+     ( O O O W O O W O O O O O O O O O O O O O)
+     ( O O O O O B O O O O O O O O O O O O O O)
+     ( O O O O O O O O O O O O O O O O O O O O)
+     ( O O O O O O O O O O O O O O O O O O O O)
+     ( O O O W W W W O O O O W O O O O O O O O)
+     ( O O O O O O O O O O O O O O O O O O O O)
+     ( O O O O O O O O O W O O O O O O O O O O)
+     ( O O W O O O O O W O O O O O O O O O O O)
+     ( O O W O O O O W O O O O O O O O O O O O)
+     ( O O W O O O W O O O O O O O O O O O O O)
+     ( O O W O O O O O O O O O O O O B O O O O)
+     ( O O O O O O O O O O O O W W W W O O O O)
+     ( O O O O W W B O O O O O O W O O O O O O)
+     ( O O O W O O O O O O O O O O W O O O O O)
+     ( O O O W O O O O O O O O O O O W O O O O)
+     ( O O O B O O O O O O O O O O O O O O O O)
+    )))
    
 
+;; (defun sum-consecutive-col (board color count x y dx dy sum)
+;; 
+    ;; (print (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0))
+    ;; (print (sum-consecutive-col pente-board (first '(W)) 4 0 1 1 0 0))
+    ;; (print (sum-consecutive-forwardLower pente-board (first '(W)) 4 15 19 15 19 1 -1 0))
+    ;; (print (consecutive pente-board (first '(W)) 4 15 1 1 1))
+        ;; (print (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0))
 
-    (print (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0))
+    ;; (print (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0))
+
+    (print (total-four-consecutive pente-board (first '(W))))
+
 )

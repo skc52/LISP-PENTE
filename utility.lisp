@@ -7,16 +7,17 @@
 (defun consecutive (board color count x y dx dy)
    (cond
 
-        ((not (and (<= 0 x 18) (<= 1 y 19)))
-            (print "Out of bound")
-            (terpri)
-            ()
+        ((= count 0)
+            t   
         )
+        
 
         (t
             (cond
-                ((= count 0)
-                    t   
+                ((not (and (<= 0 x 18) (<= 1 y 19)))
+                    (print "Out of bound")
+                    (terpri)
+                    ()
                 )
                 (t
                     (cond 
@@ -24,6 +25,7 @@
                             (consecutive board color (- count 1) (+ x dx) (+ y dy) dx dy)
                         )
                         (t 
+
                             ()
 
                         )
@@ -68,26 +70,187 @@
         
     )
 )
-;; ;; count is the number of consecutives we are looking for
-;; (defun check-horizontal (board color count i)
-;;     (cond
-;;         ((= i 19)
-;;             0
-;;         )
-;;         (t
-;;             (+ (sum (first board) color count 1) (check-horizontal (rest board) color count (+ i 1)))
-;;         )
 
-;;     )
-    
-;; )
+(defun sum-consecutive-col (board color count x y dx dy sum)
+    (cond 
+ 
+        ((> y 19)
+        ;; return the sum
+            sum
 
-;; (defun check-vertical (board color count)
+        )
+        (t 
+            (cond 
+                ((> x 15)
+                    ;; start looking at new col
+                    (sum-consecutive-col board color count 0 (+ y 1) dx dy sum)
+                )
+                (t
+                    (cond 
+                    ;; if consecutive is true increment sum by 1 and x by 4
+                        ((consecutive board color count x y dx dy)
+                            (sum-consecutive-col board color count (+ x 4) y dx dy (+ sum 1))
+                        )
+                        ;; else increment x by 1 and continue looking
+                        (t
+                            (sum-consecutive-col board color count (+ x 1) y dx dy sum)
+                        )
+                    )
+                )
+            )
+        )
+        
+    )
+)
 
-;; )
-;; (defun check-backward (board color count)
 
-;; )
-;; (defun check-forward (board color count)
+(defun sum-consecutive-backwardLower (board color count ox oy x y dx dy sum)
+    (cond 
+ 
+        ((< ox 0)
+        ;; return the sum
+            sum
 
-;; )
+        )
+        (t 
+            (cond 
+                ((> x 18)
+                    ;; start looking at new col
+            
+                    (sum-consecutive-backwardLower board color count (- ox 1) oy (- ox 1) oy  dx dy sum)
+                )
+                (t
+                    (cond 
+                    ;; if consecutive is true increment sum by 1 and x by 4 and y by 4
+                        ((consecutive board color count x y dx dy)
+                        
+                            (sum-consecutive-backwardLower board color count ox oy (+ x 4) (+ y 4) dx dy (+ sum 1))
+                        )
+                        ;; else increment x by 1 and y by 1 and continue looking
+                        (t
+                            (sum-consecutive-backwardLower board color count ox oy (+ x 1) (+ y 1) dx dy sum)
+                        )
+                    )
+                )
+            )
+        )
+        
+    )
+)
+
+(defun sum-consecutive-backwardUpper (board color count ox oy x y dx dy sum)
+    (cond 
+        
+        ((> oy 16)
+        ;; return the sum
+            sum
+
+        )
+        (t 
+            
+            (cond 
+                ((> y 19)
+                    ;; start looking at new col
+                    (sum-consecutive-backwardUpper board color count ox (+ oy 1) ox (+ oy 1) dx dy sum)
+                )
+                (t
+                   (cond 
+                    ;; if consecutive is true increment sum by 1 and x by 4 and y by 4
+                    
+                        ((consecutive board color count x y dx dy)
+                            (sum-consecutive-backwardUpper board color count ox oy (+ x 4) (+ y 4) dx dy (+ sum 1))
+                        )
+                        ;; else increment x by 1 and y by 1 and continue looking
+                        (t
+                            (sum-consecutive-backwardUpper board color count ox oy (+ x 1) (+ y 1) dx dy sum)
+                        )
+                    )
+                )
+            )
+        )
+        
+    )
+)
+
+;; 15 19 ox oy
+;; 1 -1 dx dy
+(defun sum-consecutive-forwardLower (board color count ox oy x y dx dy sum)
+    (cond 
+ 
+        ((< ox 0)
+        ;; return the sum
+            sum
+
+        )
+        (t 
+            (cond 
+                ((> x 18)
+                    ;; start looking at new col
+                    (print "Row")
+                            (print ox)
+                    (sum-consecutive-backwardLower board color count (- ox 1) oy (- ox 1) oy  dx dy sum)
+                )
+                (t
+                    (cond 
+                    ;; if consecutive is true increment sum by 1 and x by 4 and y by -4
+                        ((consecutive board color count x y dx dy)
+                        
+                            (sum-consecutive-backwardLower board color count ox oy (+ x 4) (- y 4) dx dy (+ sum 1))
+                        )
+                        ;; else increment x by 1 and y by -1 and continue looking
+                        (t
+                            (sum-consecutive-backwardLower board color count ox oy (+ x 1) (- y 1) dx dy sum)
+                        )
+                    )
+                )
+            )
+        )
+        
+    )
+)
+
+;; 0 18 ox oy
+;; 1 -1 dx dy
+(defun sum-consecutive-forwardUpper (board color count ox oy x y dx dy sum)
+    (cond 
+ 
+        ((< oy 4)
+        ;; return the sum
+            sum
+
+        )
+        (t 
+            (cond 
+                ((< y 1)
+                    ;; start looking at new col
+                    (sum-consecutive-forwardUpper board color count ox (- oy 1) ox (- oy 1) dx dy sum)
+                )
+                (t
+                   (cond 
+                    ;; if consecutive is true increment sum by 1 and x by 4 and y by 4
+                        ((consecutive board color count x y dx dy)
+                            (sum-consecutive-forwardUpper board color count ox oy (+ x 4) (- y 4) dx dy (+ sum 1))
+                        )
+                        ;; else increment x by 1 and y by 1 and continue looking
+                        (t
+                            (sum-consecutive-forwardUpper board color count ox oy (+ x 1) (- y 1) dx dy sum)
+                        )
+                    )
+                )
+            )
+        )
+        
+    )
+)
+
+(defun total-four-consecutive (pente-board color)
+    (+ (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0) (
+        + (sum-consecutive-forwardLower pente-board (first '(W)) 4 15 19 15 19 1 -1 0) (
+            + (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0) (
+                + (sum-consecutive-backwardLower pente-board (first '(W)) 4 15 1 15 1 1 1 0) (
+                    + (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0) (sum-consecutive-col pente-board (first '(W)) 4 0 1 1 0 0)
+                )
+            )
+        )
+    )) 
+)

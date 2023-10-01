@@ -19,4 +19,5 @@ added bounds checking in update board
 wrote function consecutive that return true/false based on the consecutive state and the number of consecutives 
 that we wanna look for is provided in count parameter
 
-added function to determine the total number of horizontal consecutives
+added function to determine the total number of horizontal consecutives, vertical, backward digonal and forward diagonal
+wrote function to give me the total number of 4 consecutives

@@ -4,7 +4,7 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'W 'W 'W 'W 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
+             (list 'O 'O 'O 'O 'O 'O 'W 'W 'W 'W 'O 'O 'O 'W 'W 'W 'W 'O 'O )))))
 
 (defun create-board (n)
   (cond 
@@ -55,7 +55,7 @@
 (defun update-board (board i j user-input)
     ;; check if within bound both row and column
     (cond 
-        ((not (or (<= 0 i 18) (<= 1 j 19)))
+        ((not (and (<= 0 i 18) (<= 1 j 19)))
             (print "Row or column not within bounds")
             ()
         )
@@ -235,28 +235,11 @@
 )
 
 
-(defun consecutive (board color count x y dx dy)
-   (cond
-        ((= count 0)
-            t
-        )
-        (t
-            (cond 
-                ((equal (get-color board x y) color)
-                    (consecutive board color (- count 1) (+ x dx) (+ y dy) dx dy)
-                )
-                (t 
-                    ()
 
-                )
-            )
-        )
-    )
-)
 ; Example usage:
 (let ((pente-board (create-board 20)))
    
-  ; (print-board pente-board)
-;;   (print (get-color pente-board 19 2))
-    (print (consecutive pente-board (first '(W)) 4 3 8 1 -1))
+
+
+    (print (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0))
 )

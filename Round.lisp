@@ -29,14 +29,13 @@
         ;; set human color to W
         ;; set computer color to B
        (format t "You won the call. You will start the game~%")
-        '(W B)
+         '(W B)
         )
       (t
         ;; set human color to B
         ;; set computer color to W
+        (format t "You lost the call. Computer will start the game~%")))
         '(B W)
-       (format t "You lost the call. Computer will start the game~%")))
-    
    ))
 
 
@@ -73,6 +72,28 @@
     (princ " ,Five Points ")
     (princ cFiveScore)
     (terpri)
+)
+
+(defun print-end-of-game-stats (hTotScore cTotScore)
+
+    (print "----------------------END OF TORUNAMENT----------------------------")
+    (terpri)
+    (princ "Total human score : ")
+    (princ hTotScore)
+    (terpri)
+    (princ "Total computer score : ")
+    (princ cTotScore)
+    (terpri)
+
+    (cond 
+        ((> hTotScore cTotScore)
+            (print "Human Won the Tournament")
+        )
+        (t
+            (print "Computer won the Tournament")
+        )
+
+    )
 )
 
 
@@ -150,7 +171,7 @@
     (let* 
         (
             ;; (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
-            (gamelist     (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 5 0 0 0))
+            (gamelist     (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0))
             (humanColor (first (rest gameList)))
             (comColor (first (rest (rest gameList))))
             (h4ConsCount (total-four-consecutive (first gamelist)  (first '(W)))) 
@@ -166,7 +187,7 @@
         )
 
             ;; determine winner of the round
-            (print humanColor)
+           
             ;; calculate total scores for both
             ;; display the scores
             (give-round-summary hPrevscores cPrevscores h4ConsCount c4ConsCount hCpairs cCpairs hFiveScore cFiveScore hTotScore cTotScore)
@@ -176,14 +197,14 @@
 
             (cond 
                 ((continue-game)
-                    (print "Continuinh game")
+                    (print "Continuing game...")
                     
                     (start-round (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
                 )
                 (t
                     ;; print torunament scores determine winner
                     (print-end-of-game-stats (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
-                    ()
+                    
                 )
             
             )
@@ -200,6 +221,7 @@
     ;; check if input is empty
     ;; if empty put the piece in the position
     ;; pass the turn
+    (terpri)
     (print-board board)
     (terpri)
     (print "---------------------------------------------------------------------------------------")
@@ -252,6 +274,25 @@
                                     (
                                         (capture-dir-list (check-and-capture-pairs board input-x input-y playingColor nextColor))
                                         (captured-board (check-capture-update board capture-dir-list input-x input-y playingColor nextColor))
+                                        (fiveCtr (length (five-consecutive captured-board input-x input-y playingColor)))
+                                        (hFiveUpdate (cond
+                                            ((and (equal playingColor hColor) (> fiveCtr 0) ) 
+                                                5
+                                            )
+                                            (t
+                                                0                                            
+                                            )
+
+                                        ))
+                                        (cFiveUpdate (cond
+                                            ((and (equal playingColor cColor) (> fiveCtr 0) ) 
+                                                5
+                                            )
+                                            (t
+                                                0                                            
+                                            )
+
+                                        ))
                                         (hCapScores (cond 
                                                 ((and (equal playingColor hColor))
                                                     (+ hCPScore (length capture-dir-list))
@@ -280,8 +321,8 @@
                                         (terpri)
 
                                         (print-stats-during-game hColor cColor playingColor hCapScores cCapScores)
-
-                                    (playgame (update-board captured-board input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCapScores cCPScore hFiveScore cFiveScore)
+                                        
+                                    (playgame (update-board captured-board input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCapScores cCPScore hFiveUpdate cFiveUpdate)
                                 )
                             )
                         )

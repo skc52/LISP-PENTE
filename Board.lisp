@@ -306,13 +306,20 @@
         ;; (print (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0))
 
     ;; (print (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0))
-    (print pente-board)
-    (print (total-four-consecutive pente-board (first '(B))))
+    ;; (print pente-board)
+    ;; (print (total-four-consecutive pente-board (first '(B))))
     ;; (print (get-color pente-board 18 ))
     ;; (print (capture-pair pente-board 11 13 1 -1 (first '(B)) (first '(W))))
     ;; (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))
     ;; (print (determine-consecutive-count pente-board 12 11 0 1 (first '(W)) 0))
     ;; (print  (five-possible pente-board 0 6 0 1 (first '(W))))
     ;; (print (five-consecutive pente-board 0 6 (first '(W))))
+
+
+;; (defun save-game (board hCPair hTotScore cCPair CTotScore nextPlayer nextPlayerColor)
+
+    (save-game pente-board 0 0 0 0 'Human (first '(W)))
+
+    
 
 )

@@ -53,6 +53,8 @@ added code to check for 3 intersections away in the 2nd turn in the playgame fun
 
 added code in playgame that actually captures the pairs and also updates the capture count
 
+finished game logic...when capture pairs is 5 or 5 consecutive is reached, round ends, then 4 cons is counted
+
 
 
 

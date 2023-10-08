@@ -348,7 +348,7 @@
 ;; function to determine if 5 consecutive is possible in a direction?
 ;; return the list of directions as in dx and -dx if true else empty list
 ;; left right indicate which directions of a direction are true
-;;  0 1 1 -1 means right side of the forward diagonal is true
+;;  0 1, 1 -1 means right side of the forward diagonal is true
 (defun five-possible (board x y dx dy color)
     (let* (
         (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))

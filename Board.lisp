@@ -288,12 +288,12 @@
      ( O O O O O B O O O O O O O O W O W W W W)
      ( O O O O O B O O O O O O O O W O W W W W)
      ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
+     ( O O O O O B O O W O O W O O W O W W W W)
+     ( O O O O O B O O B O B O O O W O W W W W)
+     ( O W O O O O O O B B O O O O W O W W W W)
+     ( O B O O O W B B O B B W O O W O W W W W)
+     ( O B O O O O O O O O O O O O W O W W W W)
+     ( O O B B W O O O O O O O O O W O W W W W)
     )))
    
 
@@ -309,7 +309,7 @@
     ;; (print pente-board)
     ;; (print (total-four-consecutive pente-board (first '(B))))
     ;; (print (get-color pente-board 18 ))
-    ;; (print (capture-pair pente-board 11 13 1 -1 (first '(B)) (first '(W))))
+    ;; (print (capture-pair pente-board 18 1 -1 0 (first '(W)) (first '(B))))
     ;; (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))
     ;; (print (determine-consecutive-count pente-board 12 11 0 1 (first '(W)) 0))
     ;; (print  (five-possible pente-board 0 6 0 1 (first '(W))))
@@ -318,8 +318,9 @@
 
 ;; (defun save-game (board hCPair hTotScore cCPair CTotScore nextPlayer nextPlayerColor)
 
-    (save-game pente-board 0 0 0 0 'Human (first '(W)))
-
-    
+    ;; (save-game pente-board 0 0 0 0 'Human (first '(W)))
+      (print  (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))))
+        (print-board (check-capture-update pente-board (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))) 16 8  (first '(W)) (first '(B)) ))
+    ;; (playgame pente-board (first '(W)) (first '(B)) (first '(B)) 1 0 0 0 0)
 
 )

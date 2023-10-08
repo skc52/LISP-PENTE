@@ -57,8 +57,25 @@ finished game logic...when capture pairs is 5 or 5 consecutive is reached, round
 
 
 
+-----------------------------------------------------------------------------------------------------------------------------
+Oct 2
+Worked on save-game 
+after every turn the game asks user to save the game or not ..it also asks for the filename 
+could not figure out how to save the game to a txt file in lisp 
+
+//============================================================================================================================
 
 
+Oct 3
+
+Wrote functions to determine the total number of pieces in the board. This will be useful in determining turn num for a loaded game
+
+Determining turn num is useful if a user had saved a game before the 2nd turn of white could come.
+
+Wrote function to determine game-stat from the read data from the file 
+
+enabled to load from file and play game from the loaded stats
+Could not figure out how to read from file..every time stack overflow occured
 
 
 

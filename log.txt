@@ -80,12 +80,21 @@ Could not figure out how to read from file..every time stack overflow occured
 
 
 
+Oct 7
+Fixed bug with multiple captures, single capture was okay...but multiple was returning an error. In function check
+andupdate
+
+Oct 10
+Worked on loading from file and saving game to file. Both works now. 
+In strategy.lisp added function to determine the row and col for the max priority in the board
 
 
+i gave 4 cons slightly higher priority than pais captured, 12 for 4 cons, 10 for pairs captured
+this is because pairs captured can reach a plateau but 4 cons can never
+i gave 3cons 6 priority
 
 
-
-
+Oct 11
 
 
 

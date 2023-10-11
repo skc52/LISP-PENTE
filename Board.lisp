@@ -4,7 +4,7 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'B 'B 'O 'O 'O 'O 'O 'O 'W 'O 'O 'O 'O 'O )))))
+             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
 
 (defun create-board (n)
   (cond 
@@ -34,7 +34,19 @@
             ;;     )
                 
             ;; )
-            (format t "~a " (first row))
+
+            (cond 
+                ((and (equal (first '(O)) (first row)) (not (equal (first '(P)) (first (rest row)))) )
+                    (format t "~a " (first '(_)) )
+                )
+                ((and (numberp (first row)) (<= 0 (first row) 9) )
+                    (format t " ~a " (first row))
+                )
+                (t
+                    (format t "~a " (first row))
+
+                )
+            )
             (print-row (rest row))
         )
     )
@@ -225,7 +237,6 @@
         )     
     )
 )
-(print (parse-position "b2"))
 ;; (validate-user-input "A10")
 
 ;; (ask-user-position-input)
@@ -248,7 +259,10 @@
 ;; function to get the color at row = i and col = j
 (defun get-color (board i j)
     (cond 
-            ;; if we reach the desired row
+            ;; iboundary checking
+        ((or ( < i 0) (> i 18) (< j 1) (> j 19))
+            ()
+        )
         ((= i 0)
             ;; get the row 
             ;; and call the update-row function
@@ -319,8 +333,8 @@
 ;; (defun save-game (board hCPair hTotScore cCPair CTotScore nextPlayer nextPlayerColor)
 
     ;; (save-game pente-board 0 0 0 0 'Human (first '(W)))
-      (print  (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))))
-        (print-board (check-capture-update pente-board (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))) 16 8  (first '(W)) (first '(B)) ))
+    ;;   (print  (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))))
+    ;;     (print-board (check-capture-update pente-board (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))) 16 8  (first '(W)) (first '(B)) ))
     ;; (playgame pente-board (first '(W)) (first '(B)) (first '(B)) 1 0 0 0 0)
 
 )

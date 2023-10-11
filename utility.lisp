@@ -345,6 +345,38 @@
     )
 )
 
+;; emptyRequiredCnt is the minimum empty count required to be feasible for 4
+(defun determine-empty-count (board x y dx dy color ctr emptyRequiredCnt)
+
+    (cond 
+        ((equal emptyRequiredCnt 0)
+            (list ctr)
+        )
+        ((not (and (<= 0 (+ x dx) 18) (<= 1 (+ y dy) 19)))
+            (list ctr)
+        )
+        ((equal (get-color board (+ x dx) (+ y dy)) color) 
+            (determine-empty-count board (+ x dx) (+ y dy) dx dy color (+ ctr 1) (- emptyRequiredCnt 1))
+        )
+        (t 
+            (list ctr)
+        )
+    )
+)
+
+;; function to determine open ends
+(defun determine-open-ends (board x y dx dy color ctr consCount emptyRequiredCnt)
+
+    (let* 
+        (
+            ;; openCount is the number of open positions right after the consecutive ones
+            (openCount (first  (determine-empty-count board x y (* dx consCount) (* dy consCount) (first '(O)) 0 emptyRequiredCnt)))
+        )
+
+        (list openCount)
+    )
+)
+
 ;; function to determine if 5 consecutive is possible in a direction?
 ;; return the list of directions as in dx and -dx if true else empty list
 ;; left right indicate which directions of a direction are true
@@ -467,10 +499,15 @@
    ) )
 )
 
+;; TODO UNIT TEST
+;; this should only return directions where there are chances of making at least 4 cons
 (defun three-possible (board x y dx dy color)
     (let* (
         (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+        (left-open-count (first (determine-open-ends board x y dx dy color 0 consecutive-ctr-left 1)))
         (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+        (right-open-count (first (determine-open-ends board x y (* dx -1) (* dy -1) color 0 consecutive-ctr-right 1)))
+
         (left (cond 
             ((>= consecutive-ctr-left 2)
                 1
@@ -496,8 +533,7 @@
         
 
     (cond 
-            ((>= consecutive-ctr  2)
-
+            ((and (>= consecutive-ctr  2) (or (> left-open-count 0) (> right-open-count 0) )) 
             
                 (list (list left right dx dy))
             )
@@ -516,5 +552,92 @@
             )
    ) )
 )
+
+;; TODO UNIT TEST
+;; only return if both ends are open and have chance of creating 4
+(defun two-possible (board x y dx dy color)
+    (let* (
+        (enemyColor (cond 
+            ((equal (first '(W)) color)
+                (first '(B))
+            )
+            (t
+                (first '(W))
+            )
+
+        ))
+        (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+        (left-open-count (first (determine-open-ends board x y dx dy color 0 consecutive-ctr-left 2)))
+        (rigtNbrEnemy (cond 
+                ;; (+ x (* dx -1)) is giving me error
+                ((equal enemyColor (get-color board (+ x (* dx -1)) (+ y (* dy -1))))
+                    t
+                )
+                (t 
+                    ()
+                )
+            ))
+        (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+        (right-open-count (first (determine-open-ends board x y (* dx -1) (* dy -1) color 0 consecutive-ctr-right 2)))
+        (leftNbrEnemy (cond 
+                ((equal enemyColor (get-color board (+ x dx) (+ y dy)))
+                    t
+                )
+                (t 
+                    ()
+                )
+            ))
+        (left (cond 
+            ((>= consecutive-ctr-left 1)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+        (right (cond 
+            ((>= consecutive-ctr-right 1)
+                1
+            )
+            (t 
+                0
+            )
+        ))
+            
+        (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
+
+
+        )
+
+        
+            ;; (print leftNbrEnemy)
+            ;; (print rigtNbrEnemy)
+    (cond 
+            ;; if chances of capture, dont return the list
+            
+            ;; ((and (equal consecutive-ctr 1) (or leftNbrEnemy rigtNbrEnemy) ) 
+            ;;     ()
+            ;; )
+            ((and (>= consecutive-ctr  1) (or (> left-open-count 1) (> right-open-count 1) )) 
+
+            
+                (list (list left right dx dy))
+            )
+            (t 
+                ()
+            )
+
+    )
+    )
+)
+
+(defun two-consecutive (board x y color)
+   (append (two-possible board x y 0 1 color) (
+        append (two-possible board x y 1 0 color) (
+            append (two-possible board x y 1 1 color) (two-possible board x y 1 -1 color)
+            )
+   ) )
+)
+
 
 

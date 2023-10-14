@@ -503,45 +503,40 @@
 ;; this should only return directions where there are chances of making at least 4 cons
 (defun three-possible (board x y dx dy color)
     (let* (
-        (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
-        (left-open-count (first (determine-open-ends board x y dx dy color 0 consecutive-ctr-left 1)))
-        (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
-        (right-open-count (first (determine-open-ends board x y (* dx -1) (* dy -1) color 0 consecutive-ctr-right 1)))
-
-        (left (cond 
-            ((>= consecutive-ctr-left 2)
-                1
-            )
-            (t 
-                0
-            )
-        ))
-        (right (cond 
-            ((>= consecutive-ctr-right 2)
-                1
-            )
-            (t 
-                0
-            )
-        ))
-            
-        (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
-
-
+            (consecutive-ctr-left (first (determine-consecutive-count board x y dx dy color 0)))
+            (left-open-count (first (determine-open-ends board x y dx dy color 0 consecutive-ctr-left 1)))
+            (consecutive-ctr-right (first (determine-consecutive-count board x y (* dx -1) (* dy -1) color 0)))
+            (right-open-count (first (determine-open-ends board x y (* dx -1) (* dy -1) color 0 consecutive-ctr-right 1)))
+            (left (cond 
+                ((>= consecutive-ctr-left 2)
+                    1
+                )
+                (t 
+                    0
+                )
+            ))
+            (right (cond 
+                ((>= consecutive-ctr-right 2)
+                    1
+                )
+                (t 
+                    0
+                )
+            ))
+            (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
         )
 
-        
+        (format t "Consecutive ctr is ~A . Left open count is ~A. Right open count is ~A" consecutive-ctr left-open-count right-open-count )
+        (cond 
+                ((and (>= consecutive-ctr  2) (or (> left-open-count 0) (> right-open-count 0) )) 
+                
+                    (list (list left right dx dy))
+                )
+                (t 
+                    ()
+                )
 
-    (cond 
-            ((and (>= consecutive-ctr  2) (or (> left-open-count 0) (> right-open-count 0) )) 
-            
-                (list (list left right dx dy))
-            )
-            (t 
-                ()
-            )
-
-    )
+        )
     )
 )
 
@@ -612,12 +607,27 @@
         
             ;; (print leftNbrEnemy)
             ;; (print rigtNbrEnemy)
+
+   
     (cond 
-            ;; if chances of capture, dont return the list
-            
-            ;; ((and (equal consecutive-ctr 1) (or leftNbrEnemy rigtNbrEnemy) ) 
-            ;;     ()
-            ;; )
+            ;;TODO FIX THIS if chances of capture, dont return the list
+            ;; the following code considers the case Enemy EMpty Own
+            ;; Dont place in Empty
+            ((and (equal consecutive-ctr 1) (or leftNbrEnemy rigtNbrEnemy) ) 
+                
+                ()
+            )
+
+            ;; for the case
+            ;; ENemy Own EMpty, dont place in empty
+            ((and (equal consecutive-ctr-left 1) (and (equal consecutive-ctr-right 0) (equal left-open-count 0) ))
+                ()
+            )
+             ((and (equal consecutive-ctr-right 1) (and (equal consecutive-ctr-left 0) (equal right-open-count 0) ))
+                ()
+            )
+
+
             ((and (>= consecutive-ctr  1) (or (> left-open-count 1) (> right-open-count 1) )) 
 
             
@@ -638,6 +648,7 @@
             )
    ) )
 )
+
 
 
 

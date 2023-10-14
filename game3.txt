@@ -1,5 +1,5 @@
 
-(BOARD
+(
  ((19 O O O O O O O O O O O O O O O O O O O)
   (18 O O O O O O O O O O O O O O O O O O O)
   (17 O O O O O O O O O O O O O O O O O O O)
@@ -10,7 +10,7 @@
   (12 O O O O O O O O O O O O O O O O O O O)
   (11 O O O O O O O O O O O O O O O O O O O)
   (10 O O O O O O O O O W O O O O O O O O O)
-  (9 O O O O O O O O O O O O O O O O O O O)
+  (9 O O O O O O W W W W O O O O O O O O O)
   (8 O O O O O O O O O O O O O O O O O O O)
   (7 O O O O O O O O O O O O O O O O O O O)
   (6 O O O O O O O O O O O O O O O O O O O)
@@ -20,4 +20,4 @@
   (2 B O O O O O O O O O O O O O O O O O O)
   (1 O O O O O O O O O O O O O O O O O O O)
   (X A B C D E F G H I J K L M N O P Q R S))
- HUMAN 0 0 COMPUTER 0 0 NEXTPLAYER COMPUTER W) 
+  0 0  0 0 COMPUTER W) 

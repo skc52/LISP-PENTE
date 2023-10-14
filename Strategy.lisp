@@ -2,7 +2,7 @@
 
 (load "Board.lisp")
 (load "utility.lisp")
-(load "Round.lisp")
+;; (load "Round.lisp")
 ;; check four consecutive possibility
     ;; both ends open, high priority
 ;; check three consecutive possibility
@@ -28,7 +28,7 @@
 (defun create-row-priority (n)
   (cond 
     ((= n 1)
-     '(X A B C D E F G H I J K L M N O P Q R S))
+     '(0 A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
              (list -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1)))))
@@ -41,6 +41,24 @@
      (cons (create-row-priority n) (create-board-priority (- n 1))))))
 
 
+(defun create-row-reasons (n)
+  (cond 
+    ((= n 1)
+     '(X A B C D E F G H I J K L M N O P Q R S))
+    (t 
+     (append (list (- n 1))
+             (list () () () () () () () () () () () () () () () () () () ())))))
+
+(defun create-board-reasons (n)
+  (cond 
+    ((= n 0)
+     nil)
+    (t 
+     (cons (create-row-reasons n) (create-board-reasons (- n 1)))))) 
+
+
+;; CASE where every empty cell have same priority
+
 
 ;; Check Five consecutive possibility
     ;; if winning with vast difference, prioritize getting points by 4 consecutive or pairs capturing
@@ -51,20 +69,22 @@
 ;; go through each valid position in the board and determine its 5 consecutive
 ;; start from 0 1 and go upto 18 19 
 ;; pboard is priority board and board is gameboard
-(defun set-priority-based-on-5-cons(pboard board x y ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
+(defun set-priority-based-on-5-cons(rboard pboard board x y ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
+    
+    ;; (print-board rboard)
     (cond
         ;; if reached the last of the row and the end of the col
         ((and (equal y 20) (equal x 18))
-            pboard
+        ;;    (print (append (list pboard) (list rboard)))
+            (append (list pboard) (list rboard))
         )
         ;; if reached the end of the column, increment row
         ((equal y 20)
-            (set-priority-based-on-5-cons pboard board (+ x 1) 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
+            (set-priority-based-on-5-cons rboard pboard board (+ x 1) 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
         )
         ;; ignore filled cells in the board
         ((not (equal (get-color board x y) (first '(O))))
-            (set-priority-based-on-5-cons pboard board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
-
+            (set-priority-based-on-5-cons rboard pboard board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
         )
         (t  
             ;;  determine 5-cons possible priorities    
@@ -80,7 +100,8 @@
                             (cond 
                                 ((> fiveCount 0)
 
-                                
+                                    ;; one of the fivecounts will be counted for 5 consecutive and from the remaining
+                                    ;; fivecounts we can collect 1 points as 4 consecutives
                                     (cond 
                                         ((> (- (+ pairsCaptured totalScore fourScore) (+ enemyPairsCaptured enemyTotalScore enemyFourScore)) 4)
                                             (+ 10 (* (- fiveCount 1) 12))
@@ -108,16 +129,35 @@
                         
                         
                     )
+
+                    (newReason
+                            (cond 
+                                ((> fiveCount 0)
+
+                                    ;; one of the fivecounts will be counted for 5 consecutive and from the remaining
+                                    ;; fivecounts we can collect 1 points as 4 consecutive
+ ;; reason in the rboard will be of format (fiveCons fourCons pairsCapture threeCons twoCons stopFiveCons stopFourCons stopGettingCaptured stop3cons stop2cons)
+
+                                    (list 1 (- 1 fiveCount) 0 0 0 0 0 0 0 0)
+                                )
+                                (t 
+                                   ()
+
+                                )
+                            )
+                        
+                        
+                    )
                 )
 
                 (cond 
                     ((> newPriority (get-color pboard x y))
                         ;; determine priority factor based on open ends, 
                         ;; based on score difference
-                        (set-priority-based-on-5-cons (update-board pboard x y newPriority) board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
+                        (set-priority-based-on-5-cons (update-board rboard x y newReason) (update-board pboard x y newPriority) board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
                     )
                     (t
-                        (set-priority-based-on-5-cons pboard board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
+                        (set-priority-based-on-5-cons rboard  pboard board x (+ y 1) ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
                     )
                 )           
             )
@@ -352,17 +392,159 @@
             (fourScore (total-four-consecutive board ownColor))
             (enemyFourScore (total-four-consecutive board enemyColor))
             (pboard (create-board-priority 20))
-            (pboard (set-priority-based-on-5-cons pboard board 0 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore))
+            (rboard (create-board-reasons 20))
+            ;; reason in the rboard will be of format (fiveCons fourCons pairsCapture threeCons twoCons stopFiveCons stopFourCons stopGettingCaptured stop3cons stop2cons)
+            (prboard (set-priority-based-on-5-cons rboard pboard board 0 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore))
+            ;; (print prboard)
+            (pboard (first prboard))
+            (rboard (first (rest prboard)))
+          
             (pboard (set-priority-based-on-4-cons pboard board 0 1 ownColor))
             (pboard (set-priority-based-on-pairs-captured pboard board 0 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore))
             (pboard (set-priority-based-on-3-cons pboard board 0 1 ownColor))
             (pboard (set-priority-based-on-2-cons pboard board 0 1 ownColor))
 
+            ;; now from enemy's point of view
+            (prboard (set-priority-based-on-5-cons rboard pboard board 0 1 enemyColor enemyPairsCaptured pairsCaptured enemyTotalScore totalScore enemyFourScore fourScore))
+            (pboard (first prboard))
+            (rboard (first (rest prboard)))
+            (pboard (set-priority-based-on-4-cons pboard board 0 1 enemyColor))
+            (pboard (set-priority-based-on-pairs-captured pboard board 0 1 enemyColor enemyPairsCaptured pairsCaptured enemyTotalScore totalScore enemyFourScore fourScore ))
+            (pboard (set-priority-based-on-3-cons pboard board 0 1 enemyColor))
+            (pboard (set-priority-based-on-2-cons pboard board 0 1 enemyColor))
+
+            
         )
 
         pboard
     )
 )
+
+
+;; CASE where every empty cell have same priority
+(defun choose-randomly (pboard board turnNum)
+    (cond 
+        ;; in the third turn choose 3 steps away from center
+        ((equal turnNum 2)
+            (let* 
+                (
+                    (x (random 7))
+                    (y (+ (random 6) 1))
+                )   
+            
+            ;; if not taken
+            (cond 
+                ((and (equal (get-color board x y) (first '(O)))  (equal (get-color pboard x y) 0))
+                    (list x y "Randomly chosen")
+                )
+                (t
+                    (choose-randomly pboard board turnNum)
+                )
+            )
+            )
+        )
+        (t
+            (let* 
+                (
+                    (x (random 19))
+                    (y (+ (random 19) 1))
+                )   
+            
+            ;; if not taken
+            (cond 
+                ((equal (get-color board x y) (first '(O)))
+                    (print x)
+                    (list x y)
+                )
+                (t
+                    (choose-randomly pboard board turnNum)
+                )
+            )
+            )
+        )
+    )
+)
+
+;; TODO, dont set yourself up for capture
+
+;; function to get the max priority x and y
+;; go through the entire priority board and pick out the max priority row and col
+(defun get-best-position(pboard bestPriority bestX bestY x y board turn)
+    (cond
+        ;; if reached the last of the row and the end of the col
+        ((and (equal y 20) (equal x 18))
+            (cond 
+                ((equal bestPriority 0)
+                    ( choose-randomly pboard board turn)
+                )
+                (t
+                    (list bestX bestY)
+                )
+            )
+            
+        )
+        ;; if reached the end of the column, increment row
+        ((equal y 20)
+            (get-best-position pboard bestPriority bestX bestY (+ x 1) 1 board turn)
+        )      
+        (t  
+            ;; get the priority of that x and y and compare it with bestPriority
+            ;; if the priorty > bestPriority, set bestPriority to priority and bestX to x and bestY to y
+            (cond 
+                ((< bestPriority (get-color pboard x y))   
+                    (get-best-position pboard (get-color pboard x y) x y x (+ y 1) board turn)
+                )
+                (t
+                    (get-best-position pboard bestPriority bestX bestY x (+ y 1) board turn)
+
+                )
+            )
+            
+        )
+    )
+)
+
+;; function to convert indices to labels
+(defun indices-to-labels(position)
+
+    (let* 
+        (
+            (row (first position))
+            (col (first (rest position)))
+            (row-label ( - 19 row))
+            (col-label (code-char (+ (+ (- col 1) (char-code #\A)))))
+        )
+        
+        (format t "~c~A" col-label  row-label )
+    )
+)
+
+;; convert best position to row and col labels and show them as suggestions
+(defun give-suggestion (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore turn)
+
+    (let* 
+        (
+            (pboard (setOwnPriority board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore))
+            (best-position (get-best-position pboard -1 -1 -1 0 1 board turn))
+
+            ;; convert best position to labels
+            ;; (row (first best-position))
+            ;; (col (first (rest best-position)))
+            ;; (row-label ( - 19 row))
+            ;; (col-label (code-char (+ (+ (- col 1) (char-code #\A)))))
+            
+        )
+
+        
+         (format t "Suggested position is " )
+         (indices-to-labels best-position)
+         (terpri)
+
+    )
+
+)
+
+;; TODO convert position to labels
 
 ;; TESTING setOwnPriority
 (let* 
@@ -372,58 +554,33 @@
             (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O W B B O O O O W O O O O O O)
-            (O O O O O O O O O O O O W O O O O O O O)
-            (O O O O O O O O O O O W O O O O O O O O)
-            (O O O O O O O O O W W W W O O O O O O O)
-            (O O O O O O O O O O O O W O O O O O O O)
-            (O O O O O O O O O O O O O W O O O O O O)
-            (O O O O O W W O O O O O O O O O O O O O)
+            (O O O O O B B O B B O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O W O O O O O O O O O O O O O)
+            (B O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
+            (O B O O O O O O B O O O O O O O O O O O)
+            (O B O O O O O O O O O O O O O O O O O O)
+            (O O O O W W W W O W W W W O O O O O O O)
+            (O O O O O O O O O O O O O B O O O O O O)
+            (O B O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O B O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O))
         )
         ;; (defun setOwnPriority (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore)
 
-        (pboard (setOwnPriority board (first '(W)) 2 1 1 4))
+        ;; (pboard (setOwnPriority board (first '(W)) 2 1 1 4))
     )
-    (print-board pboard)
+    ;; (print-board pboard)
+    ;; (print (get-best-position pboard -1 -1 -1 0 1 board 2))
+
+    ;; (give-suggestion board (first '(W)) 2 1 1 4 0)
+    
+
 
 )
 
 
 
-;; TODO, dont set yourself up for capture
-
-;; function to get the max priority x and y
-;; go through the entire priority board and pick out the max priority row and col
-(defun get-best-position(pboard bestPriority bestX bestY x y)
-    (cond
-        ;; if reached the last of the row and the end of the col
-        ((and (equal y 20) (equal x 18))
-            (list bestX bestY)
-        )
-        ;; if reached the end of the column, increment row
-        ((equal y 20)
-            (get-best-position pboard bestPriority bestX bestY (+ x 1) 1 )
-        )      
-        (t  
-            ;; get the priority of that x and y and compare it with bestPriority
-            ;; if the priorty > bestPriority, set bestPriority to priority and bestX to x and bestY to y
-            (cond 
-                ((< bestPriority (get-color pboard x y))   
-                    (get-best-position pboard (get-color pboard x y) x y x (+ y 1) )
-                )
-                (t
-                    (get-best-position pboard bestPriority bestX bestY x (+ y 1))
-
-                )
-            )
-            
-        )
-    )
-)

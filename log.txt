@@ -89,15 +89,28 @@ Worked on loading from file and saving game to file. Both works now.
 In strategy.lisp added function to determine the row and col for the max priority in the board
 
 
-i gave 4 cons slightly higher priority than pais captured, 12 for 4 cons, 10 for pairs captured
+i gave 4 cons slightly higher priority than pairs captured, 12 for 4 cons, 10 for pairs captured
 this is because pairs captured can reach a plateau but 4 cons can never
 i gave 3cons 6 priority
 
 
 Oct 11
 
+Worked on strategy. Created a priority board 20 by 20. Created an algorithm that goes through every empty space
+and assigns a priority to that space based on different criterias. 
+
+Created a function in utility that checks for the number of empty spaces right after the consecutive pieces.
+This is important in determining whether a 3 cons or a 2 cons have the room to grow up to a 4cons at least.
+
+Wrote logic to avoid placing in places where you are setting yourself up for a capture
 
 
+Oct14
+added row validation in userinput. 1a would give me an error. So had to write a function that checks if the 
+row label is strictly numeric
+if human is playing, it now provides option to ask for help in the playgame function. it is right after asking to save the game 
+
+if computer is playing, it does not ask for help, instead it places its piece according to strategy and passes the turn to human now.
 
 
 

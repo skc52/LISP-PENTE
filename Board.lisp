@@ -1,7 +1,7 @@
 (defun create-row (n)
   (cond 
     ((= n 1)
-     '(X A B C D E F G H I J K L M N O P Q R S))
+     '(0 A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
              (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
@@ -36,6 +36,7 @@
             ;; )
 
             (cond 
+            ;; if O then show by _, but in label we have O too, so dont replace the O of label
                 ((and (equal (first '(O)) (first row)) (not (equal (first '(P)) (first (rest row)))) )
                     (format t "~a " (first '(_)) )
                 )
@@ -131,24 +132,35 @@
 (defun ask-user-position-input ()
     (format t "Enter the position where you want to put your piece. Follow the format A10, K1, etc~%")
     (let ((user-choice (read-line)))
-        (format t "You entered ~a" user-choice)           
-    
-
-        ;; ;; check if input position is valid
-        ;; (cond 
-        ;;     ((not (validate-user-input user-choice))
-        ;;         (ask-user-position-input)
-        ;;     )
-        ;;     (t
-
-        ;;     )
-        ;; )
-
-        ;; return userschoice
+        ;; (format t "You entered ~a" user-choice)           
         user-choice
     )
 
 )
+
+
+(defun is-numeric-char (c)
+    (digit-char-p c)
+)
+
+(defun is-numeric-string (str)
+  (cond
+    ; Base case: an empty string is considered numeric.
+    ((string= str "")
+        t
+    )
+    ; Check the first character.
+    ((is-numeric-char (char str 0))
+
+        ; Recursively check the rest of the string.
+        (is-numeric-string (subseq str 1))
+    ) 
+    (t 
+        ()
+    )
+)
+) ; If any character is not numeric, return false.
+
 
 ;; function to validate position input
 ;; must contain alpha and number, followng the format alpha then num
@@ -158,6 +170,8 @@
 (defun validate-user-input (user-input)
    (let (
         (input-length (length user-input))
+
+
         (col-label (char user-input 0))
         (row-label (subseq user-input 1)))
 
@@ -170,14 +184,20 @@
             ()
         )
         ((< input-length 2)
-            (print "Input Length cannot be more than 3. ")
+            (print "Input Length cannot be less than 2. ")
             (terpri)
             ()
         )
         (t 
         ;; if invalid row
             (cond 
-                ;; TODO check if the row input is strictly numeric
+                ;; TODO check if the row input is strictly numeric      
+                ((not (is-numeric-string row-label))
+                    (print "Row value must be numeric")
+                    (terpri)
+                    ()
+                )
+
                 ;; Col input validation is fine
 
 
@@ -196,6 +216,8 @@
                             ;; return nil
                             ()
                         )
+
+                        
 
                         (t 
                             t

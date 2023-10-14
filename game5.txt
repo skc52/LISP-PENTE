@@ -1,5 +1,5 @@
 
-(";Board"
+(
  ((O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
@@ -19,4 +19,4 @@
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O))
- ";Human" 0 0 ";Computer" 0 0 ";Next player" HUMAN B) 
+ 0 0  0 0 HUMAN B) 

@@ -3,6 +3,7 @@
 (load "utility.lisp")
 
 (load "Sereialization.lisp")
+(load "Strategy.lisp")
 (defun ask-to-call ()
   (format t "We are tossing a coin to determine who starts the round. What would you like to call?~%")
   (format t "Enter 0 for Heads, 1 for Tails~%")
@@ -54,13 +55,16 @@
     ;; show winner
     (cond 
         ((> hTotScore cTotScore)
-            (print "HUMAN WON THE ROUND")
+            (format t "HUMAN WON THE ROUND")
+            (terpri)
         )
         ((< hTotScore cTotScore)
-            (print "COMPUTER WON THE ROUND")
+            (format t "COMPUTER WON THE ROUND")
+            (terpri)
         )
         (t 
-            (print "THE ROUND WAS A TIE")
+            (format t "THE ROUND WAS A TIE")
+            (terpri)
         )
     )
     ;; display round scores 
@@ -83,27 +87,27 @@
     (terpri)
 )
 
-(defun print-end-of-game-stats (hTotScore cTotScore)
+;; (defun print-end-of-game-stats (hTotScore cTotScore)
 
-    (print "----------------------END OF TORUNAMENT----------------------------")
-    (terpri)
-    (princ "Total human score : ")
-    (princ hTotScore)
-    (terpri)
-    (princ "Total computer score : ")
-    (princ cTotScore)
-    (terpri)
+;;     (print "----------------------END OF TORUNAMENT----------------------------")
+;;     (terpri)
+;;     (princ "Total human score : ")
+;;     (princ hTotScore)
+;;     (terpri)
+;;     (princ "Total computer score : ")
+;;     (princ cTotScore)
+;;     (terpri)
 
-    (cond 
-        ((> hTotScore cTotScore)
-            (print "Human Won the Tournament")
-        )
-        (t
-            (print "Computer won the Tournament")
-        )
+;;     (cond 
+;;         ((> hTotScore cTotScore)
+;;             (print "Human Won the Tournament")
+;;         )
+;;         (t
+;;             (print "Computer won the Tournament")
+;;         )
 
-    )
-)
+;;     )
+;; )
 
 ;; function to print end of game stats
 (defun print-end-of-game-stats (hTotScore cTotScore)
@@ -219,7 +223,8 @@
 
                         (cond 
                             ((continue-game)
-                                (print "Continuing game...")
+                                (format t "Continuing game...")
+                                (terpri)
                                 
                                 (start-round (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
                             )
@@ -240,7 +245,8 @@
 ;; (board (hPrevscores cPrevscores) (human-color computer-color) (hCpairs, cCpairs) (hFourCons cFourCons) (hFiveCons cFiveCons) )
 (defun start-round (hPrevscores cPrevscores)
 
-    (print "STARTING THE ROUND------------------------------------------------------------------------------")
+    (format t "STARTING THE ROUND------------------------------------------------------------------------------")
+    (terpri)
     ;; create a new board
     ;; ask human to call the toss if hPrevscores and cPrevscores are equal
     ;; toss coin
@@ -281,19 +287,42 @@
 
             (cond 
                 ((not gameList)
-                    (print "Game saved and quitted!")
+                    (format t "Game saved and quitted!")
+                    (terpri)
                 )
                 (t 
                     (let* 
                         (
                             (humanColor (first (rest gameList)))
                             (comColor (first (rest (rest gameList))))
-                            (h4ConsCount (total-four-consecutive (first gamelist)  (first '(W)))) 
-                            (c4ConsCount (total-four-consecutive (first gamelist)  (first '(B)) ))
-                            (hCpairs (first (rest (rest ( rest gameList)))))
-                            (cCpairs (first (rest (rest ( rest  (rest gameList))))))
                             (hFiveScore  (first (rest (rest ( rest (rest ( rest gameList)))))))
                             (cFiveScore  (first (rest (rest ( rest (rest ( rest (rest gameList))))))))
+
+                            ;; subtract one from the four cons of the winner if the winner won by 5consecutive
+                            (h4ConsCount 
+                                (cond 
+                                    ((equal hFiveScore 5)
+                                        (- (total-four-consecutive (first gamelist)  (first '(W))) 1)
+                                    )
+                                    (t 
+                                        (total-four-consecutive (first gamelist)  (first '(W)))
+                                    )
+                                )
+                            ) 
+                            (c4ConsCount 
+                                (cond 
+                                    ((equal cFiveScore 5)
+                                        (- (total-four-consecutive (first gamelist)  (first '(B)) ) 1)
+                                    )
+                                    (t 
+                                        (total-four-consecutive (first gamelist)  (first '(B)) )
+                                    )
+                                )
+                            ) 
+                            ;; (c4ConsCount (total-four-consecutive (first gamelist)  (first '(B)) ))
+                            (hCpairs (first (rest (rest ( rest gameList)))))
+                            (cCpairs (first (rest (rest ( rest  (rest gameList))))))
+                            
                             (hTotScore (+ h4ConsCount hCpairs hFiveScore ))
                             (cTotScore (+ c4ConsCount cCpairs cFiveScore))
                         )
@@ -310,7 +339,8 @@
 
                         (cond 
                             ((continue-game)
-                                (print "Continuing game...")
+                                (format t "Continuing game...")
+                                (terpri)
                                 (start-round (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
                             )
                             (t
@@ -329,157 +359,193 @@
     )
 )
 
-(defun playgame (board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore hPrevscores cPrevscores)
-    ;; ask user input
-    ;; validate input
-    ;; parse input
-    ;; check if input is empty
-    ;; if empty put the piece in the position
-    ;; pass the turn
-    (terpri)
-    
-    ;; (print-stats-during-game hColor cColor playingColor hCPScore cCPScore)
+;; function to ask user if he needs suggestion on where to put the piece
+(defun need-help ()
+  (format t "Do you need help? (Enter 0 for 'no' or 1 for 'yes')~%")
 
-    (print-board board)
-    (terpri)
-    (print "---------------------------------------------------------------------------------------")
-    (terpri)
 
-    ;; ask to save game
-    (let* 
-            (
-                (currentPlayerName (cond 
-                                        ((equal playingColor hColor)
-                                            'Human
-                                        )
-                                        (t
-                                            'Computer
-                                        )
-
-                ))
-            )
-        
-            (cond 
-                
-                ((save-game board hCPScore hPrevscores cCPScore cPrevscores currentPlayerName playingColor)
-                    ;; quit the game
-                    ()
-                )
-                (t
-
-               
-
+  (let ((user-choice (read-line)))
     (cond 
+      ((string= user-choice "0")
+       (format t "You entered 0~%")
+        ()
+       )
+      ((string= user-choice "1")
+       (format t "You entered 1~%")
+        t
+       )
+      (t 
+       (format t "Invalid input. Please enter 0 for no or 1 for yes~%")
+       (need-help))))
+)
+
+
+(defun playgame (board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore hPrevscores cPrevscores)
+    (cond 
+        ;; check for captured pairs, if 5 then return 
         ((or (> hCPScore 4) (> cCPScore 4) )
-        ;; (board (hPrevscores cPrevscores) (human-color computer-color) (hCpairs, cCpairs) (hFourCons cFourCons) (hFiveCons cFiveCons) )
-            (print "GAME ENDED")
+            (format t "GAME ENDED")
+            (terpri)
             (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
 
         )
-
+        ;; check for 5 cons, if true then return
         ((or (equal hFiveScore 5) (equal cFiveScore 5))
             (print cCPScore)
-            (print "GAME ENDED")
+            (format t "GAME ENDED")
+            (terpri)
             (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
         )
-        (t
-                            (let* (
-                            (nextColor 
-                                (cond 
-                                    ((equal playingColor (first '(W)))
-                                        (first '(B))
-                                    )
-                                    (t
-                                        (first '(W))
-                                    )
-                                )
-                            )
-                            (position (parse-position (first (ask-and-validate))));; col and row
-                            (input-x (first (rest position)))
-                            (input-y (first position))
-                            ;; check if position is empty
-                            (isEmpty (equal (get-color board (first (rest position))  (first position)) (first '(O))))
+        ;; game can continue
+        (t 
+
+        ;; ask user input
+        ;; validate input
+        ;; parse input
+        ;; check if input is empty
+        ;; if empty put the piece in the position
+        ;; pass the turn
+        (terpri)
+        (print-board board)
+        (terpri)
+        (print "---------------------------------------------------------------------------------------")
+        (terpri)
+
+        ;; ask to save game
+        (let* 
+            (
+                (currentPlayerName 
+                    (cond 
+                        ((equal playingColor hColor)
+                            'Human
                         )
-                        ;; print the board at the start of each game iteration
-                        
-                        (cond
+                        (t
+                            'Computer
+                        )
 
-                            ((and (equal turn 2) (not (or (or (<= 4  (- input-x 9) 18) (<= -18 (- input-x 9) -4)) (or (<= 4  (- input-y 10) 18) (<= -18 (- input-y 10) -4)))) ) 
-                                (print "Cannot put within 3 steps in 2nd turn of White. Enter new position")
-                                (terpri)
-                                (playGame board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore hPrevscores cPrevscores)
-                            ) 
-                            ((not isEmpty)
-                                (print "Position is not empty. Put somewhere else")
-                                (terpri)
-                                (playGame board hColor cColor playingColor turn hCPScore cCPScore hFiveScore cFiveScore hPrevscores cPrevscores)
+                    )
+                )
+            )
+            
+        (cond 
+            ((save-game board hCPScore hPrevscores cCPScore cPrevscores currentPlayerName playingColor)
+                ;; quit the game
+                ()
+            )
+            (t
+                (cond 
+                    ;; if it is computer turn dont ask for help    
+                    ;; else provide option to ask for help
+                    ( (and (equal playingColor hColor) (need-help))
+                        (cond 
+                            ((equal playingColor hColor)
+                                (give-suggestion board hColor hCPScore cCPScore hPrevscores cPrevscores turn )
                             )
-                            ;; is empty then update the board
-                            (t 
-                                ;; check for captured pairs, if 5 then return 
-                                
-                                ;; check for 5 cons, if true then return
-                                (let* 
-                                    (
-                                        (capture-dir-list (check-and-capture-pairs board input-x input-y playingColor nextColor))
-                                        (captured-board (check-capture-update board capture-dir-list input-x input-y playingColor nextColor))
-                                        (fiveCtr (length (five-consecutive captured-board input-x input-y playingColor)))
-                                        (hFiveUpdate (cond
-                                            ((and (equal playingColor hColor) (> fiveCtr 0) ) 
-                                                5
-                                            )
-                                            (t
-                                                0                                            
-                                            )
-
-                                        ))
-                                        (cFiveUpdate (cond
-                                            ((and (equal playingColor cColor) (> fiveCtr 0) ) 
-                                                5
-                                            )
-                                            (t
-                                                0                                            
-                                            )
-
-                                        ))
-                                        (hCapScores (cond 
-                                                ((and (equal playingColor hColor))
-                                                    (+ hCPScore (length capture-dir-list))
-                                                )
-                                                (t
-                                                    hCPScore
-                                                )
-                                            
-                                            )
-                                        )
-
-                                        (cCapScores (cond 
-                                                ((and (equal playingColor cColor))
-                                                    (+ cCPScore (length capture-dir-list))
-                                                )
-                                                (t 
-                                                    cCPScore
-                                                )
-                                            )
-
-
-                                        )
-
-                                    )
-                                        (print "---------------------------------------------------------------------------------------")
-                                        (terpri)
-
-                                        (print-stats-during-game hColor cColor playingColor hCapScores cCapScores)
-                                        
-                                    (playgame (update-board captured-board input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCapScores cCapScores hFiveUpdate cFiveUpdate hPrevscores cPrevscores)
-                                )
+                            (t
+                                (give-suggestion board cColor cCPScore hCPScore cPrevscores hPrevscores  turn )
                             )
                         )
                     )
-        )
-    )
-     )
+                )
+
+                (let* (
+                        (nextColor 
+                            (cond 
+                                ((equal playingColor (first '(W)))
+                                    (first '(B))
+                                )
+                                (t
+                                    (first '(W))
+                                )
+                            )
+                        )
+                        (position (cond 
+                            ;; if human ask for position
+                            ((equal playingColor hColor)
+                                
+                                (parse-validated-pos turn board)
+                            )
+                            (t 
+                                
+                                (get-best-position (setOwnPriority board playingColor cCPScore hCPScore cPrevscores hPrevscores) -1 -1 -1 0 1 board turn)
+                                
+
+                            )
+                        ))
+                        (input-x (first position))
+                        (input-y (first (rest position)))
+                        )
+
+                        ;; print the position chosen
+                        (cond 
+                            ((equal playingColor cColor)
+                                (format t "Computer placed its piece on ")
+                            )
+                            (t 
+                                (format t "You placed your piece on ")
+                            )
+                        )
+                        ;; prints out the positions
+                        (indices-to-labels position)
+
+    
+                        (let* 
+                            (
+                                (capture-dir-list (check-and-capture-pairs board input-x input-y playingColor nextColor))
+                                (captured-board (check-capture-update board capture-dir-list input-x input-y playingColor nextColor))
+                                (fiveCtr (length (five-consecutive captured-board input-x input-y playingColor)))
+                                (hFiveUpdate (cond
+                                    ((and (equal playingColor hColor) (> fiveCtr 0) ) 
+                                        5
+                                    )
+                                    (t
+                                        0                                            
+                                    )
+
+                                ))
+                                (cFiveUpdate (cond
+                                    ((and (equal playingColor cColor) (> fiveCtr 0) ) 
+                                        5
+                                    )
+                                    (t
+                                        0                                            
+                                    )
+
+                                ))
+                                (hCapScores (cond 
+                                        ((and (equal playingColor hColor))
+                                            (+ hCPScore (length capture-dir-list))
+                                        )
+                                        (t
+                                            hCPScore
+                                        )
+                                    
+                                    )
+                                )
+
+                                (cCapScores (cond 
+                                        ((and (equal playingColor cColor))
+                                            (+ cCPScore (length capture-dir-list))
+                                        )
+                                        (t 
+                                            cCPScore
+                                        )
+                                    )
+
+
+                                )
+
+                            )
+                            (print "---------------------------------------------------------------------------------------")
+                            (terpri)
+                            (print-stats-during-game hColor cColor playingColor hCapScores cCapScores)    
+                            (playgame (update-board captured-board input-x input-y playingColor) hColor cColor nextColor (+ turn 1) hCapScores cCapScores hFiveUpdate cFiveUpdate hPrevscores cPrevscores)
+                        )                            
+                )   
             )
+            )
+        )
+        )
     )
 )
 
@@ -528,6 +594,7 @@
     (capture-pairs-real board input-x input-y capture-dir-list  (length capture-dir-list))
 )
 
+
 (defun ask-and-validate()
     (let* (
         (pos-input (ask-user-position-input))
@@ -544,6 +611,34 @@
     )
 
     )
+)
+
+(defun parse-validated-pos (turn board)
+    (let* 
+        (
+             ;; parse position returns col as first in the list and then row
+            (parsedPos (parse-position (first (ask-and-validate))))
+            (input-x (first (rest parsedPos)))
+            (input-y (first parsedPos))
+            (isEmpty (equal (get-color board input-x input-y) (first '(O))))
+
+        )
+        (cond 
+            ((and (equal turn 2) (not (or (or (<= 4  (- input-x 9) 18) (<= -18 (- input-x 9) -4)) (or (<= 4  (- input-y 10) 18) (<= -18 (- input-y 10) -4)))) ) 
+                (print "Cannot put within 3 steps in 2nd turn of White. Enter new position")
+                (terpri)
+                (parse-validated-pos turn board)
+            ) 
+            ((not isEmpty)
+                (print "Position is not empty. Put somewhere else")
+                (terpri)
+                (parse-validated-pos turn board)
+            )
+            (t 
+                (list input-x input-y)
+            )
+        )
+    )   
 )
 
 (defun print-stats-during-game(hColor cColor currentColor hCPScores cCPScores)
@@ -574,4 +669,4 @@
 )
 
 ;; (start-round 0 0)
-;; (resume-round)
+(resume-round)

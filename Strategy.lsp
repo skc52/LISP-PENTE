@@ -2,44 +2,60 @@
 
 (load "Board.lsp")
 (load "utility.lsp")
-;; (load "Round.lisp")
-;; check four consecutive possibility
-    ;; both ends open, high priority
-;; check three consecutive possibility
-    ;; both ends open, semi high priority
-    ;; if no prospect of becoming a 4 or a 5, no priority
-    ;; else medium priority
-;; check capture possibility
-    ;; if one end open, sure capture, high priority
-    ;; if with this capture wins the game
-        ;; if winning by major difference, maximum priority
-        ;; if winning but not much difference, high priority
-        ;; if losing and with this capture can draw, take it
-        ;; if losing and with this capture will lose for sure, negative priority
-    ;; if both ends open semi medium proirty
 
-;; check being captured possibility
-    ;; if both ends open, high priority
-    ;; if one end open, maximim priority
 
 
 ;; function to get the max priority position
-
+;; /* *********************************************************************
+;;    Function Name: create-row-priority
+;;    Purpose: To create a row of priorities based on the specified row number.
+;;    Parameters:
+;;        n, an integer representing the row number.
+;;    Return Value: Returns a list of priorities for the specified row.
+;;    Algorithm:
+;;        1) If n is 1, create a row of priorities including labels '0' to 'S'.
+;;        2) For any other value of n, create a row with '0' as the first element followed by -1 values.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun create-row-priority (n)
   (cond 
     ((= n 1)
      '(0 A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1)))))
+             (list -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1))))
+)
 
+;; /* *********************************************************************
+;;    Function Name: create-board-priority
+;;    Purpose: To create a board of priorities based on the specified number of rows.
+;;    Parameters:
+;;        n, an integer representing the number of rows in the board.
+;;    Return Value: Returns a 2D list representing the board of priorities.
+;;    Algorithm:
+;;        1) If n is 0, return nil to indicate an empty board.
+;;        2) For any other value of n, create a board by consing rows created by the `create-row-priority` function.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun create-board-priority (n)
   (cond 
     ((= n 0)
      nil)
     (t 
-     (cons (create-row-priority n) (create-board-priority (- n 1))))))
+     (cons (create-row-priority n) (create-board-priority (- n 1)))))
+)
 
+;; /* *********************************************************************
+;;    Function Name: create-row-reasons
+;;    Purpose: To create a row of reasons based on the specified row number.
+;;    Parameters:
+;;        n, an integer representing the row number.
+;;    Return Value: Returns a list of reasons for the specified row.
+;;    Algorithm:
+;;        1) If n is 1, create a row of reasons including labels 'X' to 'S'.
+;;        2) For any other value of n, create a row with '0' as the first element followed by empty strings.
+;;    Assistance Received: none
+;; ********************************************************************* */
 
 (defun create-row-reasons (n)
   (cond 
@@ -47,14 +63,28 @@
      '(X A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "")))))
+             (list "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""))))
+)
+
+;; /* *********************************************************************
+;;    Function Name: create-board-reasons
+;;    Purpose: To create a board of reasons based on the specified number of rows.
+;;    Parameters:
+;;        n, an integer representing the number of rows in the board.
+;;    Return Value: Returns a 2D list representing the board of reasons.
+;;    Algorithm:
+;;        1) If n is 0, return nil to indicate an empty board.
+;;        2) For any other value of n, create a board by consing rows created by the `create-row-reasons` function.
+;;    Assistance Received: none
+;; ********************************************************************* */
 
 (defun create-board-reasons (n)
   (cond 
     ((= n 0)
      nil)
     (t 
-     (cons (create-row-reasons n) (create-board-reasons (- n 1)))))) 
+     (cons (create-row-reasons n) (create-board-reasons (- n 1)))))
+) 
 
 
 ;; CASE where every empty cell have same priority
@@ -69,6 +99,36 @@
 ;; go through each valid position in the board and determine its 5 consecutive
 ;; start from 0 1 and go upto 18 19 
 ;; pboard is priority board and board is gameboard
+
+
+;; /* *********************************************************************
+;;    Function Name: set-priority-based-on-5-cons
+;;    Purpose: To set priorities for a game board based on the possibility of 5 consecutive pieces.
+;;    Parameters:
+;;        rboard, the current reason board.
+;;        pboard, the current priority board.
+;;        board, the game board.
+;;        x, the current x-coordinate.
+;;        y, the current y-coordinate.
+;;        ownColor, the color of the player.
+;;        pairsCaptured, the number of pairs captured.
+;;        enemyPairsCaptured, the number of enemy pairs captured.
+;;        totalScore, the total score of the player.
+;;        enemyTotalScore, the total score of the enemy.
+;;        fourScore, the score for four consecutive pieces.
+;;        enemyFourScore, the score for four consecutive enemy pieces.
+;;    Return Value: Returns a pair of updated reason board and priority board.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column. If so, return the updated boards.
+;;        2) If the current position (x, y) is at the last column, increment the row and continue the search.
+;;        3) If the cell at (x, y) is not empty, ignore it and continue to the next cell.
+;;        4) Calculate the priority and reason for a 5-consecutive possibility using the `five-consecutive` function.
+;;        5) Determine the new priority based on the calculated priority and the game state.
+;;        6) Compare the new priority with the current priority in the priority board and update it if the new one is greater.
+;;        7) Recursively call the function on the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun set-priority-based-on-5-cons(rboard pboard board x y ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
     
     ;; (print-board rboard)
@@ -149,6 +209,30 @@
     )
 )
 
+
+
+;; /* *********************************************************************
+;;    Function Name: set-priority-based-on-4-cons
+;;    Purpose: To set priorities for a game board based on the possibility of 4 consecutive pieces.
+;;    Parameters:
+;;        rboard, the current reason board.
+;;        pboard, the current priority board.
+;;        board, the game board.
+;;        x, the current x-coordinate.
+;;        y, the current y-coordinate.
+;;        ownColor, the color of the player.
+;;    Return Value: Returns a pair of updated reason board and priority board.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column. If so, return the updated boards.
+;;        2) If the current position (x, y) is at the last column, increment the row and continue the search.
+;;        3) If the cell at (x, y) is not empty, ignore it and continue to the next cell.
+;;        4) Calculate the priority and reason for a 4-consecutive possibility using the `four-consecutive` function.
+;;        5) Determine the new priority based on the calculated priority.
+;;        6) Compare the new priority with the current priority in the priority board and update it if the new one is greater.
+;;        7) Recursively call the function on the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun set-priority-based-on-4-cons(rboard pboard board x y ownColor)
     (cond
         ;; if reached the last of the row and the end of the col
@@ -194,7 +278,27 @@
 
 )
 
-;; this should only get priority if there is a possibility od 4 cons or more
+;; /* *********************************************************************
+;;    Function Name: set-priority-based-on-3-cons
+;;    Purpose: To set priorities for a game board based on the possibility of 3 consecutive pieces.
+;;    Parameters:
+;;        rboard, the current reason board.
+;;        pboard, the current priority board.
+;;        board, the game board.
+;;        x, the current x-coordinate.
+;;        y, the current y-coordinate.
+;;        ownColor, the color of the player.
+;;    Return Value: Returns a pair of updated reason board and priority board.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column. If so, return the updated boards.
+;;        2) If the current position (x, y) is at the last column, increment the row and continue the search.
+;;        3) If the cell at (x, y) is not empty, ignore it and continue to the next cell.
+;;        4) Calculate the priority and reason for a 3-consecutive possibility using the `three-consecutive` function.
+;;        5) Determine the new priority based on the calculated priority.
+;;        6) Compare the new priority with the current priority in the priority board and update it if the new one is greater.
+;;        7) Recursively call the function on the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun set-priority-based-on-3-cons(rboard pboard board x y ownColor)
     (cond
         ;; if reached the last of the row and the end of the col
@@ -241,7 +345,27 @@
 
 )
 
-;; this should only get priority if there is a possibility od 4 cons or more
+;; /* *********************************************************************
+;;    Function Name: set-priority-based-on-2-cons
+;;    Purpose: To set priorities for a game board based on the possibility of 2 consecutive pieces.
+;;    Parameters:
+;;        rboard, the current reason board.
+;;        pboard, the current priority board.
+;;        board, the game board.
+;;        x, the current x-coordinate.
+;;        y, the current y-coordinate.
+;;        ownColor, the color of the player.
+;;    Return Value: Returns a pair of updated reason board and priority board.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column. If so, return the updated boards.
+;;        2) If the current position (x, y) is at the last column, increment the row and continue the search.
+;;        3) If the cell at (x, y) is not empty, ignore it and continue to the next cell.
+;;        4) Calculate the priority for a 2-consecutive possibility using the `two-consecutive` function.
+;;        5) Determine the new priority based on the calculated priority.
+;;        6) Compare the new priority with the current priority in the priority board and update it if the new one is greater.
+;;        7) Recursively call the function on the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun set-priority-based-on-2-cons(rboard pboard board x y ownColor)
     (cond
         ;; if reached the last of the row and the end of the col
@@ -287,11 +411,24 @@
     )
 
 )
-;; complementary functions will be checking open ends, if so adding to the priority
 
 
 
-;; function to determine reason for capture pairs
+;; /* *********************************************************************
+;;    Function Name: determine-reason-capture-pairs
+;;    Purpose: Determine the reason for capturing pairs in specific directions.
+;;    Parameters:
+;;        captureDirList, a list of directions where pairs can be captured.
+;;        count, the number of directions to check.
+;;        reason, the current reason string.
+;;    Return Value: The final reason string after considering all directions.
+;;    Algorithm:
+;;        1) Check if there are no more directions to consider. If so, return the current reason string.
+;;        2) Extract the direction (dx, dy) from the captureDirList and consider it.
+;;        3) Update the reason string based on the current direction.
+;;        4) Recursively call the function for the remaining directions.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun determine-reason-capture-pairs (captureDirList count reason)
     (cond 
         ((equal count 0)
@@ -348,9 +485,35 @@
 
 
 
-;; for sure capture
-;; check-and-capture-pairs
-;; NEED TO UNIT TEST BUT I THINK IS COMPLETE
+;; /* *********************************************************************
+;;    Function Name: set-priority-based-on-pairs-captured
+;;    Purpose: Set priorities for a game board based on the possibility of capturing pairs of pieces.
+;;    Parameters:
+;;        rboard, the current reason board.
+;;        pboard, the current priority board.
+;;        board, the game board.
+;;        x, the current x-coordinate.
+;;        y, the current y-coordinate.
+;;        ownColor, the color of the player.
+;;        pairsCaptured, the number of pairs captured by the player.
+;;        enemyPairsCaptured, the number of pairs captured by the enemy.
+;;        totalScore, the total score of the player.
+;;        enemyTotalScore, the total score of the enemy.
+;;        fourScore, the score for four consecutive pieces.
+;;        enemyFourScore, the score for four consecutive enemy pieces.
+;;    Return Value: Returns a pair of updated reason board and priority board.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column. If so, return the updated boards.
+;;        2) If the current position (x, y) is at the last column, increment the row and continue the search.
+;;        3) Ignore filled cells in the board.
+;;        4) Calculate the possible directions for capturing pairs using `check-and-capture-pairs`.
+;;        5) Determine the number of pairs that can be captured and construct a reason based on directions.
+;;        6) Modify the newPriority based on the number of pairs to capture.
+;;        7) Compare the new priority with the current priority in the priority board and update it if the new one is greater.
+;;        8) Recursively call the function on the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun set-priority-based-on-pairs-captured(rboard pboard board x y ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore)
     (cond
         ;; if reached the last of the row and the end of the col
@@ -431,6 +594,29 @@
     )
 )
 
+
+;; /* *********************************************************************
+;;    Function Name: setOwnPriority
+;;    Purpose: Set priorities for a game board for the current player.
+;;    Parameters:
+;;        board, the game board.
+;;        ownColor, the color of the current player.
+;;        pairsCaptured, the number of pairs captured by the current player.
+;;        enemyPairsCaptured, the number of pairs captured by the enemy.
+;;        totalScore, the total score of the current player.
+;;        enemyTotalScore, the total score of the enemy.
+;;    Return Value: Returns a pair of updated reason board and priority board, along with a reason string.
+;;    Algorithm:
+;;        1) Calculate the total score for four consecutive pieces for both players.
+;;        2) Create reason and priority boards for the player.
+;;        3) Set priorities based on various conditions and update the boards.
+;;        4) Determine the best position and priority for the player.
+;;        5) Set priorities for the opponent.
+;;        6) Determine the best position and priority for the opponent.
+;;        7) Decide the final reason string based on whether the best position and priority have changed.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun setOwnPriority (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore)
     (let* 
         (
@@ -505,7 +691,19 @@
 )
 
 
-;; CASE where every empty cell have same priority
+;; /* *********************************************************************
+;;    Function Name: choose-randomly
+;;    Purpose: Choose an empty cell on the game board randomly.
+;;    Parameters:
+;;        pboard, the priority board.
+;;        board, the game board.
+;;        turnNum, the current turn number.
+;;    Return Value: Returns a list with the chosen x and y coordinates and a reason.
+;;    Algorithm:
+;;        1) If it is the third turn, choose a cell that is 3 steps away from the center.
+;;        2) Otherwise, choose a random empty cell on the game board.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun choose-randomly (pboard board turnNum)
     (cond 
         ;; in the third turn choose 3 steps away from center
@@ -549,10 +747,30 @@
     )
 )
 
-;; TODO, dont set yourself up for capture
 
-;; function to get the max priority x and y
-;; go through the entire priority board and pick out the max priority row and col
+;; /* *********************************************************************
+;;    Function Name: get-best-position
+;;    Purpose: Find the cell with the highest priority on the board.
+;;    Parameters:
+;;        rboard, the reason board.
+;;        pboard, the priority board.
+;;        bestPriority, the current best priority found.
+;;        bestX, the current best X coordinate found.
+;;        bestY, the current best Y coordinate found.
+;;        x, the current X coordinate to check.
+;;        y, the current Y coordinate to check.
+;;        board, the game board.
+;;        turn, the current turn number.
+;;    Return Value: Returns the X and Y coordinates of the cell with the highest priority.
+;;    Algorithm:
+;;        1) Check if the current position (x, y) is at the last row and column.
+;;        2) If it is the last position, return a random choice on turn 2 or the best position on other turns.
+;;        3) If the current position is at the last column, increment the row and continue the search.
+;;        4) Check the priority of the current cell, and if it is higher than the best priority, update the best values.
+;;        5) Recursively call the function for the next cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun get-best-position(rboard pboard bestPriority bestX bestY x y board turn)
     (cond
         ;; if reached the last of the row and the end of the col
@@ -590,7 +808,20 @@
     )
 )
 
-;; function to convert indices to labels
+;; /* *********************************************************************
+;;    Function Name: indices-to-labels
+;;    Purpose: Convert row and column indices to labels.
+;;    Parameters:
+;;        position, a list containing row and column indices.
+;;    Return Value: Returns the cell label in the format "A1", "B2", etc.
+;;    Algorithm:
+;;        1) Extract the row and column indices from the position.
+;;        2) Convert the row index to a label by subtracting it from 19.
+;;        3) Convert the column index to a label by adding it to the ASCII value of 'A'.
+;;        4) Format the cell label and return it.
+;;    Assistance Received: none
+;; ********************************************************************* */
+
 (defun indices-to-labels(position)
 
     (let* 
@@ -605,7 +836,23 @@
     )
 )
 
-;; convert best position to row and col labels and show them as suggestions
+;; /* *********************************************************************
+;;    Function Name: give-suggestion
+;;    Purpose: Provide a suggestion for the next move to the player.
+;;    Parameters:
+;;        board, the game board.
+;;        ownColor, the color of the current player.
+;;        pairsCaptured, the number of pairs captured by the current player.
+;;        enemyPairsCaptured, the number of pairs captured by the enemy.
+;;        totalScore, the total score of the current player.
+;;        enemyTotalScore, the total score of the enemy.
+;;        turn, the current turn number.
+;;    Algorithm:
+;;        1) Calculate priority boards and determine the best position.
+;;        2) Convert the best position to row and column labels.
+;;        3) Print the suggested position and the priority of that cell.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun give-suggestion (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore turn)
 
     (let* 
@@ -625,43 +872,6 @@
 
 )
 
-;; TODO convert position to labels
-
-;; TESTING setOwnPriority
-(let* 
-    (
-        (board '((O B B O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O W O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O B B W W O O O)
-            (O O O O O O O O O O O O O O W O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O))
-        )
-        ;; (defun setOwnPriority (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore)
-
-        ;; (pboard (first (setOwnPriority board (first '(W)) 2 1 1 4)))
-    )
-    ;; (print-board pboard)
-    ;; (print (get-best-position pboard -1 -1 -1 0 1 board 3))
-
-    (give-suggestion board (first '(W)) 2 1 1 4 0)
-    
-
-
-)
 
 
 

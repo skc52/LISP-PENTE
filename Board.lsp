@@ -1,40 +1,66 @@
+
+;; /* *********************************************************************
+;;    Function Name: create-row
+;;    Purpose: To create a row for a game board
+;;    Parameters:
+;;        n, an integer representing the row number
+;;    Return Value: A list representing a game board row
+;;    Algorithm:
+;;        1) If n is 1, create a row with labels A to S and initial values of 'O'
+;;        2) Otherwise, create a row with the row number and initial values of 'O'
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun create-row (n)
   (cond 
     ((= n 1)
      '(0 A B C D E F G H I J K L M N O P Q R S))
     (t 
      (append (list (- n 1))
-             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O )))))
+             (list 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O 'O ))))
+)
 
+
+;; /* *********************************************************************
+;;    Function Name: create-board
+;;    Purpose: To create a game board for a class
+;;    Parameters:
+;;        n, an integer representing the number of rows in the board
+;;    Return Value: A list representing a game board with multiple rows
+;;    Algorithm:
+;;        1) If n is 0, return nil (an empty board)
+;;        2) Otherwise, create a row and append it to the rest of the board
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun create-board (n)
   (cond 
     ((= n 0)
      nil)
     (t 
-     (cons (create-row n) (create-board (- n 1))))))
+     (cons (create-row n) (create-board (- n 1)))))
+)
 
+
+;; /* *********************************************************************
+;;    Function Name: print-row
+;;    Purpose: To print a row of the game board with special formatting
+;;    Parameters:
+;;        row, a list representing a row of the game board
+;;    Return Value: nil (printing to console)
+;;    Algorithm:
+;;        1) If the row is empty (null), return nil (no further action)
+;;        2) For each element in the row:
+;;             a) If it's 'O' and not part of a label, print it as '_'
+;;             b) If it's a number between 0 and 9, print it with leading spaces
+;;             c) Otherwise, print it as is
+;;        3) Recursively call the function for the rest of the row
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun print-row (row)
   (cond 
         ((null row)
             nil
         )
         (t 
-        ;; print the first value of the list row with a space afterwards
-        ;; t is the output stream
-            
-            ;;  (cond 
-            ;;     ((not (equal (first row) (first '(X))))
-            ;;         (cond 
-            ;;             ((<= 1 (parse-integer (first row)) 9)
-            ;;                     (print " ")
-                            
-            ;;             )
-
-            ;;         )
-            ;;     )
-                
-            ;; )
-
             (cond 
             ;; if O then show by _, but in label we have O too, so dont replace the O of label
                 ((and (equal (first '(O)) (first row)) (not (equal (first '(P)) (first (rest row)))) )
@@ -53,15 +79,28 @@
     )
 )
 
+
+;; /* *********************************************************************
+;;    Function Name: print-board
+;;    Purpose: To print the entire game board with special formatting
+;;    Parameters:
+;;        board, a list representing the game board with multiple rows
+;;    Return Value: nil (printing to console)
+;;    Algorithm:
+;;        1) If the board is empty (null), return nil (no further action)
+;;        2) For each row in the board:
+;;             a) Call the print-row function to print the row
+;;             b) Print a new line character to move to the next row
+;;        3) Recursively call the function for the rest of the board
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun print-board (board)
   (cond
         ((null board)
             nil
         )
-        (t 
-           
+        (t        
             (print-row (first board))
-
             ;;  print a new line character
             (format t "~%")
             (print-board (rest board))
@@ -70,11 +109,19 @@
 )
 
 
-
-
-;; write function to set piece to a location
-;; will return the updated row
-;; here row is the entire row and not indexing, and i is the indexing for column
+;; /* *********************************************************************
+;;    Function Name: update-row
+;;    Purpose: To update a specific column in a row of the game board
+;;    Parameters:
+;;        row, a list representing a row of the game board
+;;        i, an integer representing the column index to update
+;;        user-input, the value to set in the specified column
+;;    Return Value: A list representing the updated row
+;;    Algorithm:
+;;        1) If i is 0, update the first element of the row with user-input
+;;        2) Otherwise, recursively call the function for the rest of the row
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun update-row (row i user-input)
     (cond 
         ((= i 0)
@@ -87,6 +134,22 @@
     )
 )
 
+
+;; /* *********************************************************************
+;;    Function Name: update-board
+;;    Purpose: To update a specific cell on the game board
+;;    Parameters:
+;;        board, a list representing the game board with multiple rows
+;;        i, an integer representing the row index
+;;        j, an integer representing the column index
+;;        user-input, the value to set in the specified cell
+;;    Return Value: A list representing the updated game board
+;;    Algorithm:
+;;        1) Check if i and j are within the bounds of the board
+;;        2) If i is 0, update the specified cell in the first row
+;;        3) Otherwise, recursively call the function for the rest of the board
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun update-board (board i j user-input)
     ;; check if within bound both row and column
     (cond 
@@ -112,23 +175,18 @@
     
 )
 
-;; (defun update-and-print-board (board i j user-input)
 
-;;     (let* (
-;;         (updated-board (update-board board i j user-input))
-;;     ) 
-
-
-;;     (terpri)
-;;     (print-board updated-board)
-;;     (terpri)
-
-;;     )
-
-    
-;; )
-
-;; function to ask for user input on the position
+;; /* *********************************************************************
+;;    Function Name: ask-user-position-input
+;;    Purpose: To prompt the user to enter a position for their game piece
+;;    Parameters: None
+;;    Return Value: A string representing the user's input (position)
+;;    Algorithm:
+;;        1) Display a message to instruct the user on the input format
+;;        2) Read the user's input as a string and store it in 'user-choice'
+;;        3) Return the user's input as a string
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun ask-user-position-input ()
     (format t "Enter the position where you want to put your piece. Follow the format A10, K1, etc~%")
     (let ((user-choice (read-line)))
@@ -143,43 +201,66 @@
 
 )
 
-
+;; /* *********************************************************************
+;;    Function Name: is-numeric-char
+;;    Purpose: To check if a character is a numeric digit
+;;    Parameters:
+;;        c, a character to be checked
+;;    Return Value: True if the character is a numeric digit, false otherwise
+;;    Algorithm:
+;;        1) Use the 'digit-char-p' function to determine if 'c' is a numeric digit
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun is-numeric-char (c)
     (digit-char-p c)
 )
 
+;; /* *********************************************************************
+;;    Function Name: is-numeric-string
+;;    Purpose: To check if a string contains only numeric characters
+;;    Parameters:
+;;        str, a string to be checked
+;;    Return Value: True if the string contains only numeric characters, false otherwise
+;;    Algorithm:
+;;        1) Base case: An empty string is considered numeric.
+;;        2) Check the first character in the string.
+;;        3) Recursively check the rest of the string.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun is-numeric-string (str)
-  (cond
-    ; Base case: an empty string is considered numeric.
-    ((string= str "")
-        t
-    )
-    ; Check the first character.
-    ((is-numeric-char (char str 0))
-
-        ; Recursively check the rest of the string.
-        (is-numeric-string (subseq str 1))
-    ) 
-    (t 
-        ()
+    (cond
+        ; Base case: an empty string is considered numeric.
+        ((string= str "")
+            t
+        )
+        ; Check the first character.
+        ((is-numeric-char (char str 0))
+            ; Recursively check the rest of the string.
+            (is-numeric-string (subseq str 1))
+        ) 
+        (t 
+            ()
+        )
     )
 )
-) ; If any character is not numeric, return false.
 
-
-;; function to validate position input
-;; must contain alpha and number, followng the format alpha then num
-;; number must be 1<num<19
-;; alphabets must be A<a<S
-
+;; /* *********************************************************************
+;;    Function Name: validate-user-input
+;;    Purpose: To validate user input for a game piece position
+;;    Parameters:
+;;        user-input, a string representing the user's input
+;;    Return Value: None (prints error messages if validation fails)
+;;    Algorithm:
+;;        1) Check if the input length is invalid (must be 2 or 3 characters).
+;;        2) Extract the column label (first character) and row label (remaining characters).
+;;        3) Validate the row label (must be strictly numeric, 1 <= num <= 19).
+;;        4) Validate the column label (must be an uppercase letter 'A' to 'S' or lowercase letter 'a' to 's').
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun validate-user-input (user-input)
    (let (
         (input-length (length user-input))
-
-
         )
-
-   
     ;;  if invalid length
     (cond 
        
@@ -195,8 +276,6 @@
             ()
         )
         (t 
-        ;; if invalid row
-
             (let* 
                 (
                     (col-label (char user-input 0))
@@ -204,7 +283,7 @@
                 )
            
                 (cond 
-                    ;; TODO check if the row input is strictly numeric      
+                    ;;  check if the row input is strictly numeric      
                     ((not (is-numeric-string row-label))
                         (print "Row value must be numeric")
                         (terpri)
@@ -212,8 +291,6 @@
                     )
 
                     ;; Col input validation is fine
-
-
                     ((not (<= 1 (parse-integer row-label) 19))
                         (print "Invalid row input.")
                         (terpri)
@@ -229,26 +306,31 @@
                                 ;; return nil
                                 ()
                             )
-
-                            
-
                             (t 
                                 t
                             )  
-                        
                         )
-
                     )
                 )
             )
-
         )
     )
-    
    )    
 )
 
-;; return ((col label), (rowlabel))
+;; /* *********************************************************************
+;;    Function Name: parse-position
+;;    Purpose: To parse user input representing a game piece position into column and row indices
+;;    Parameters:
+;;        position-input, a string representing the user's input (e.g., "A10")
+;;    Return Value: A list containing column index and row index as integers (e.g., (col-label row-label))
+;;    Algorithm:
+;;        1) Extract the column label and row label from the input.
+;;        2) Determine the column index (i) based on the column label (A to S or a to s).
+;;        3) Determine the row index (j) by converting the row label to an integer and subtracting it from 19.
+;;        4) Return a list containing (col-label row-label) as integers.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun parse-position (position-input)
     ;; determine row label and column label
     ;; convert both to indexing i and j
@@ -273,13 +355,19 @@
         )     
     )
 )
-;; (validate-user-input "A10")
 
-;; (ask-user-position-input)
 
-;; (print (update-board '((0 1 2) (3 4 5)) 0 2 5))
-
-;; returns the value at the specified column of the provided row
+;; /* *********************************************************************
+;;    Function Name: get-col
+;;    Purpose: To retrieve the value (character) at the specified column of the provided row
+;;    Parameters:
+;;        row, a list representing a row of the game board
+;;        j, an integer representing the column index
+;;    Return Value: The value (character) at the specified column of the row
+;;    Algorithm:
+;;        1) Recursively traverse the row to find the value at the specified column index.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun get-col (row j) 
     (cond 
     
@@ -292,7 +380,20 @@
     )
 )
 
-;; function to get the color at row = i and col = j
+;; /* *********************************************************************
+;;    Function Name: get-color
+;;    Purpose: To retrieve the color of a game piece at the specified position on the board
+;;    Parameters:
+;;        board, a nested list representing the game board
+;;        i, an integer representing the row index
+;;        j, an integer representing the column index
+;;    Return Value: The color of the piece at the specified position, which can be 'O' (white), 'B' (black), or NIL (empty)
+;;    Algorithm:
+;;        1) Check if the provided indices (i, j) are within the bounds of the board.
+;;        2) If not within bounds, return NIL to indicate an invalid position.
+;;        3) If within bounds, determine the color by accessing the corresponding cell on the board.
+;;    Assistance Received: none
+;; ********************************************************************* */
 (defun get-color (board i j)
     (cond 
             ;; iboundary checking
@@ -315,62 +416,4 @@
 ;; function to check for 4 consecutive piece and return its count
 (defun check-for-four (board piece-color)
    (+ (check-horizontal board piece-color 4 0) (+ (check-vertical board piece-color 4 0)  (+ (check-backward board piece-color 4 0)  (check-forward board piece-color 4 0) )))
-)
-
-
-
-
-
-; Example usage:
-;; (let ((pente-board (create-board 20)))
-
-(let ((pente-board '(
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O O O O O O O O O O W O W W W W)
-     ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O B O O O O O O O O W O W W W W)
-     ( O O O O O B O O W O O W O O W O W W W W)
-     ( O O O O O B O O B O B O O O W O W W W W)
-     ( O W O O O O O O B B O O O O W O W W W W)
-     ( O B O O O W B B O B B W O O W O W W W W)
-     ( O B O O O O O O O O O O O O W O W W W W)
-     ( O O B B W O O O O O O O O O W O W W W W)
-    )))
-   
-
-;; (defun sum-consecutive-col (board color count x y dx dy sum)
-;; 
-    ;; (print (sum-consecutive-row pente-board (first '(W)) 4 0 1 0 1 0))
-    ;; (print (sum-consecutive-col pente-board (first '(W)) 4 0 1 1 0 0))
-    ;; (print (sum-consecutive-forwardLower pente-board (first '(W)) 4 15 19 15 19 1 -1 0))
-    ;; (print (consecutive pente-board (first '(W)) 4 15 1 1 1))
-        ;; (print (sum-consecutive-backwardUpper pente-board (first '(W)) 4 0 2 0 2 1 1 0))
-
-    ;; (print (sum-consecutive-forwardUpper pente-board (first '(W)) 4 0 18 0 18 1 -1 0))
-    ;; (print pente-board)
-    ;; (print (total-four-consecutive pente-board (first '(B))))
-    ;; (print (get-color pente-board 18 ))
-    ;; (print (capture-pair pente-board 18 1 -1 0 (first '(W)) (first '(B))))
-    ;; (print (determine-capture-count pente-board 11 13 (first '(B)) (first '(W))))
-    ;; (print (determine-consecutive-count pente-board 12 11 0 1 (first '(W)) 0))
-    ;; (print  (five-possible pente-board 0 6 0 1 (first '(W))))
-    ;; (print (five-consecutive pente-board 0 6 (first '(W))))
-
-
-;; (defun save-game (board hCPair hTotScore cCPair CTotScore nextPlayer nextPlayerColor)
-
-    ;; (save-game pente-board 0 0 0 0 'Human (first '(W)))
-    ;;   (print  (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))))
-    ;;     (print-board (check-capture-update pente-board (check-and-capture-pairs pente-board 16 8  (first '(W)) (first '(B))) 16 8  (first '(W)) (first '(B)) ))
-    ;; (playgame pente-board (first '(W)) (first '(B)) (first '(B)) 1 0 0 0 0)
-
 )

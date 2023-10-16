@@ -1,6 +1,5 @@
 
-(
- ((O O O O O O O O O O O O O O O O O O O)
+(((O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
@@ -17,6 +16,6 @@
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O)
-  (O O O O O O O O O O O O O O O O O O O)
+  (B O O O O O O O O O O O O O O O O O O)
   (O O O O O O O O O O O O O O O O O O O))
- 0 0  0 0 HUMAN B) 
+ 0 0 0 0 COMPUTER WHITE) 

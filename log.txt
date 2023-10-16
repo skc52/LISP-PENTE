@@ -121,5 +121,9 @@ added logic to determine reason for capture pairs strategy
 Fixed error in utility.lisp sum-consecutive-forwardLower...four consecutives in forward diagonal were not being considered
 
 
+Oct15
+
+Added formal comment headers to all functions
+
 
 

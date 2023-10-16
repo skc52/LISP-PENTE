@@ -1,6 +1,6 @@
 
 
-(load "Board.lisp")
+(load "Board.lsp")
 
 ;; this file will have all utility functions
 
@@ -175,7 +175,7 @@
     )
 )
 
-;; 15 19 ox oy
+;; 15 19 ox oyoriginX originY of the diagonal search
 ;; 1 -1 dx dy
 (defun sum-consecutive-forwardLower (board color count ox oy x y dx dy sum)
     (cond 
@@ -183,26 +183,25 @@
         ((< ox 0)
         ;; return the sum
             sum
-
         )
         (t 
             (cond 
                 ((> x 18)
                     ;; start looking at new col
-                    (print "Row")
-                            (print ox)
-                    (sum-consecutive-backwardLower board color count (- ox 1) oy (- ox 1) oy  dx dy sum)
+                    ;; (print "Row")
+                    ;;         (print ox)
+                    (sum-consecutive-forwardLower board color count (- ox 1) oy (- ox 1) oy  dx dy sum)
                 )
                 (t
                     (cond 
                     ;; if consecutive is true increment sum by 1 and x by 4 and y by -4
                         ((consecutive board color count x y dx dy)
                         
-                            (sum-consecutive-backwardLower board color count ox oy (+ x 4) (- y 4) dx dy (+ sum 1))
+                            (sum-consecutive-forwardLower board color count ox oy (+ x 4) (- y 4) dx dy (+ sum 1))
                         )
                         ;; else increment x by 1 and y by -1 and continue looking
                         (t
-                            (sum-consecutive-backwardLower board color count ox oy (+ x 1) (- y 1) dx dy sum)
+                            (sum-consecutive-forwardLower board color count ox oy (+ x 1) (- y 1) dx dy sum)
                         )
                     )
                 )
@@ -212,7 +211,7 @@
     )
 )
 
-;; 0 18 ox oy
+;; 0 18 => ox oy originX originY of the diagonal search
 ;; 1 -1 dx dy
 (defun sum-consecutive-forwardUpper (board color count ox oy x y dx dy sum)
     (cond 
@@ -220,7 +219,6 @@
         ((< oy 4)
         ;; return the sum
             sum
-
         )
         (t 
             (cond 
@@ -411,7 +409,7 @@
             ((>= consecutive-ctr  4)
 
             
-                (list 1 (format nil "Five Consecutive in ~A." direction-name))
+                (list 1 (format nil "Five Consecutive in ~A. " direction-name))
             )
             (t 
                 (list 0 "")
@@ -538,13 +536,13 @@
                 (cond 
                     ;; tessera formation
                     ((and (> right-open-count 0) (> left-open-count 0))
-                        (list 35 (format nil "Both side open four consecutive - ~A." direction-name))
+                        (list 35 (format nil "Both side open four consecutive - ~A. " direction-name))
                     )
                     ((or (> left-open-count 0) (> right-open-count 0) )
-                        (list 15 (format nil "One side open Four Consecutive ~A." direction-name ))
+                        (list 15 (format nil "One side open Four Consecutive ~A. " direction-name ))
                     )
                     (t 
-                       (list 12 (format nil "Four Consecutive ~A." direction-name))
+                       (list 12 (format nil "Four Consecutive ~A. " direction-name))
                     )
 
                    )    
@@ -593,15 +591,17 @@
         (consecutive-ctr (+  consecutive-ctr-left consecutive-ctr-right)) 
             
         )
+
+    ;; (print consecutive-ctr)
     (cond 
-            ((= consecutive-ctr  3)
+            ((= consecutive-ctr  2)
                 (cond 
                     ;; tessera formation
                     ((and (> right-open-count 0) (> left-open-count 0))
-                        (list 10 (format nil "Both side open three consecutive - ~A." direction-name))
+                        (list 9 (format nil "Both side open three consecutive - ~A. " direction-name))
                     )
                     ((or (> left-open-count 0) (> right-open-count 0) )
-                        (list 6 (format nil "One side open three Consecutive ~A." direction-name ))
+                        (list 6 (format nil "One side open three Consecutive ~A. " direction-name ))
                     )
                     (t 
                        (list 0 (format nil "" ))
@@ -610,6 +610,7 @@
                    )    
             )
             (t 
+                
                 (list 0 "")
             )
 
@@ -774,7 +775,7 @@
 
             
                 ;; (list (list left right dx dy))
-                (list 2 (format nil "Two consecutives in ~A direction" directionname))
+                (list 2 (format nil "Two consecutives in ~A direction " directionname))
             )
             (t 
                 ;; ()
@@ -790,7 +791,7 @@
     (
         (priority (+ (first (two-possible board x y 0 1 color "horizontal")) (
                     + (first (two-possible board x y 1 0 color "vertical")) (
-                        + (first (two-possible board x y 1 1 color "backward diagonal")) (first (three-possible board x y 1 -1 color "forward diagonal") )
+                        + (first (two-possible board x y 1 1 color "backward diagonal")) (first (two-possible board x y 1 -1 color "forward diagonal") )
                         )
             ) ))
 
@@ -814,17 +815,18 @@
 
 (let* 
     (
-        (board '((O W O W W B O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O B O O O O O O O O O O O O O O O O)
-            (O O B O O B B O B B O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
-            (B O O O O O O O O O O O O O O O O O O O)
-            (O O O B O W W B O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O O O O)
+        (board 
+          '((O W O W W B O O O O O B O O B O O O O O)
+            (O O O O O O O O O O B O O O O B O O O O)
+            (O O O O O O O O O B O O O O O O B O O O)
+            (O O O O O O O O B O O O O O O O O B O O)
+            (O O O B O O O O O O O O O O O O B O O O)
+            (O O B O O B B O B B O O O O O B O O O O)
+            (O O O O O O O O O O O O O O B O O O O O)
+            (O O O O O O O O O B O O O O O O O O O O)
+            (B O O O O O O O O O B O O O O O O O O O)
+            (O O O B O W W B O O O B O O O O O O O O)
+            (O O O O O O O O O O O O B O O O O O O O)
             (O B O O O O O O B O O O O O O O O O O O)
             (O B O O O O O O O O O O O O O O O O O O)
             (O O O O W W W W O W W W W O O O O O O O)
@@ -835,6 +837,17 @@
             (O O O O O O O O O O O O O O O O O O O O))
         )
     )
+
+
+    ;; (print-board board)
+    ;; (print (sum-consecutive-forwardUpper board (first '(B)) 4 0 18 0 18 1 -1 0) )
+    ;; (print (sum-consecutive-forwardLower board (first '(B)) 4 15 19 15 19 1 -1 0))
+    ;; (print (sum-consecutive-backwardUpper board (first '(B))  4 0 2 0 2 1 1 0) )
+    ;; (print (sum-consecutive-backwardLower board (first '(B)) 4 15 1 15 1 1 1 0) )
+
+    ;; (print (consecutive board (first '(B)) 4 3 17 1 -1))
+    ;; (print (consecutive board (first '(B)) 4 0 14 1 1))
+    
 
     ;; (print (four-possible board 0 2 0 1 (first '(W)) "horizonat"))
 

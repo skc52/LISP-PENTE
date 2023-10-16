@@ -118,6 +118,7 @@ refactored code in start round and load round and made the code into a function 
 Added logic to set the priority as 0 based on building consecutives where there is no chance of getting a 4cons from there
 
 added logic to determine reason for capture pairs strategy
+Fixed error in utility.lisp sum-consecutive-forwardLower...four consecutives in forward diagonal were not being considered
 
 
 

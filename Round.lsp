@@ -1,9 +1,9 @@
 
-(load "Board.lisp")
-(load "utility.lisp")
+(load "Board.lsp")
+(load "utility.lsp")
 
-(load "Sereialization.lisp")
-(load "Strategy.lisp")
+(load "Sereialization.lsp")
+(load "Strategy.lsp")
 (defun ask-to-call ()
   (format t "We are tossing a coin to determine who starts the round. What would you like to call?~%")
   (format t "Enter 0 for Heads, 1 for Tails~%")
@@ -170,7 +170,6 @@
                 (start-round 0 0)
             )
             (t 
-                ;;     (board (first colors) (first (rest colors)) nextPlayerColor turn hCPair cCPair 0 0 nextPlayer hTotScore cTotScore)
                 (let* 
                     (
                         (game-state (load-game game-name))
@@ -198,46 +197,12 @@
 
                      (print-stats-during-game hColor cColor nextPlayerColor hCpair cCpair hPrevscores cPrevscores)
 
-                    ;; (let* 
-                    ;;     (
-                    ;;         ;; (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
-                    ;;         (gamelist (playgame board hColor cColor playingColor turn hCpair cCpair hFiveScore cFiveScore hPrevscores cPrevscores))
-                    ;;         (humanColor (first (rest gameList)))
-                    ;;         (comColor (first (rest (rest gameList))))
-                    ;;         (h4ConsCount (total-four-consecutive (first gamelist)  (first '(W)))) 
-                    ;;         (c4ConsCount (total-four-consecutive (first gamelist)  (first '(B)) ))
-                    ;;         (hCpairs (first (rest (rest ( rest gameList)))))
-                    ;;         (cCpairs (first (rest (rest ( rest  (rest gameList))))))
-                    ;;         (hFiveScore  (first (rest (rest ( rest (rest ( rest gameList)))))))
-                    ;;         (cFiveScore  (first (rest (rest ( rest (rest ( rest (rest gameList))))))))
-                    ;;         (hTotScore (+ h4ConsCount hCpairs hFiveScore ))
-                    ;;         (cTotScore (+ c4ConsCount cCpairs cFiveScore))                     
-                    ;;     )
-
-                    ;;     ;; determine winner of the round
-                    
-                    ;;     ;; calculate total scores for both
-                    ;;     ;; display the scores
-                    ;;     (give-round-summary hPrevscores cPrevscores h4ConsCount c4ConsCount hCpairs cCpairs hFiveScore cFiveScore hTotScore cTotScore)
-                    ;;     ;; ask user if he wants to continue playing
-                    ;;     ;; if yes recall this function
-                    ;;     ;; else ()
-
-                    ;;     (cond 
-                    ;;         ((continue-game)
-                    ;;             (format t "Continuing game...")
-                    ;;             (terpri)
-                                
-                    ;;             (start-round (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
-                    ;;         )
-                    ;;         (t
-                    ;;             ;; print torunament scores determine winner
-                    ;;             (print-end-of-game-stats (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))                               
-                    ;;         )                       
-                    ;;     )           
-                    ;; )   
-                        (run-game hPrevscores cPrevscores board (list hColor cColor))
-
+                    (let* 
+                        (
+                            (gamelist (playgame board hColor cColor playingColor turn hCpair cCpair hFiveScore cFiveScore hPrevscores cPrevscores))                
+                        )
+                        (run-game hPrevscores cPrevscores board (list hColor cColor) gamelist)
+                    )   
                 )
             )
         )
@@ -271,97 +236,21 @@
                 )
 
         )
-
-
     )
+    (print-stats-during-game (first colors) (first (rest colors))  (first '(W)) 0 0 hPrevscores cPrevscores)
+
     ;; call playGame function
     ;; will return the round list when game terminates
     ;; White starts at j10 always
-
-
     ;; determine 4 cons
-    (print-stats-during-game (first colors) (first (rest colors))  (first '(W)) 0 0 hPrevscores cPrevscores)
-
-    ;; (let* 
-    ;;     (
-    ;;         ;; (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
-    ;;         ;; (first '(B)) because the second player is always black
-    ;;         (gamelist (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0 hPrevscores cPrevscores))          
-    ;;     )
-
-    ;;         (cond 
-    ;;             ((not gameList)
-    ;;                 (format t "Game saved and quitted!")
-    ;;                 (terpri)
-    ;;             )
-    ;;             (t 
-    ;;                 (let* 
-    ;;                     (
-    ;;                         (humanColor (first (rest gameList)))
-    ;;                         (comColor (first (rest (rest gameList))))
-    ;;                         (hFiveScore  (first (rest (rest ( rest (rest ( rest gameList)))))))
-    ;;                         (cFiveScore  (first (rest (rest ( rest (rest ( rest (rest gameList))))))))
-
-    ;;                         ;; subtract one from the four cons of the winner if the winner won by 5consecutive
-    ;;                         (h4ConsCount 
-    ;;                             (cond 
-    ;;                                 ((equal hFiveScore 5)
-    ;;                                     (- (total-four-consecutive (first gamelist)  (first '(W))) 1)
-    ;;                                 )
-    ;;                                 (t 
-    ;;                                     (total-four-consecutive (first gamelist)  (first '(W)))
-    ;;                                 )
-    ;;                             )
-    ;;                         ) 
-    ;;                         (c4ConsCount 
-    ;;                             (cond 
-    ;;                                 ((equal cFiveScore 5)
-    ;;                                     (- (total-four-consecutive (first gamelist)  (first '(B)) ) 1)
-    ;;                                 )
-    ;;                                 (t 
-    ;;                                     (total-four-consecutive (first gamelist)  (first '(B)) )
-    ;;                                 )
-    ;;                             )
-    ;;                         ) 
-    ;;                         ;; (c4ConsCount (total-four-consecutive (first gamelist)  (first '(B)) ))
-    ;;                         (hCpairs (first (rest (rest ( rest gameList)))))
-    ;;                         (cCpairs (first (rest (rest ( rest  (rest gameList))))))
-                            
-    ;;                         (hTotScore (+ h4ConsCount hCpairs hFiveScore ))
-    ;;                         (cTotScore (+ c4ConsCount cCpairs cFiveScore))
-    ;;                     )
-
-
-    ;;                     ;; determine winner of the round
-           
-    ;;                     ;; calculate total scores for both
-    ;;                     ;; display the scores
-    ;;                     (give-round-summary hPrevscores cPrevscores h4ConsCount c4ConsCount hCpairs cCpairs hFiveScore cFiveScore hTotScore cTotScore)
-    ;;                     ;; ask user if he wants to continue playing
-    ;;                     ;; if yes recall this function
-    ;;                     ;; else ()
-
-    ;;                     (cond 
-    ;;                         ((continue-game)
-    ;;                             (format t "Continuing game...")
-    ;;                             (terpri)
-    ;;                             (start-round (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))
-    ;;                         )
-    ;;                         (t
-    ;;                             ;; print torunament scores determine winner
-    ;;                             (print-end-of-game-stats (+ hPrevscores hTotScore) (+ cPrevscores cTotScore))   
-    ;;                         )
-    ;;                     )
-    ;;                 )
-    ;;             )
-    ;;         )
-
-            
-           
-    ;; )
-
-    (run-game hPrevscores cPrevscores board colors)
-   
+    (let* 
+        (
+            ;; (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
+            ;; (first '(B)) because the second player is always black
+            (gamelist (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0 hPrevscores cPrevscores))          
+        )
+        (run-game hPrevscores cPrevscores board colors gamelist)     
+    )
     )
 )
 
@@ -393,6 +282,8 @@
         ((or (> hCPScore 4) (> cCPScore 4) )
             (format t "GAME ENDED")
             (terpri)
+            (print-board board)
+
             (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
 
         )
@@ -401,6 +292,8 @@
             (print cCPScore)
             (format t "GAME ENDED")
             (terpri)
+            (print-board board)
+
             (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
         )
         ;; game can continue
@@ -488,14 +381,20 @@
                         ;; print the position chosen
                         (cond 
                             ((equal playingColor cColor)
+                               (print-board (first priority-reason))
                                 (format t "Computer placed its piece on ")
+                                 ;; prints out the positions
+                                (indices-to-labels position)
+                                (terpri)
+                                (format t "~A ~A" (first (rest (rest priority-reason))) (get-color (first (rest priority-reason)) (first position) (first (rest position))) )
                             )
                             (t 
                                 (format t "You placed your piece on ")
+                                 ;; prints out the positions
+                                (indices-to-labels position)
                             )
                         )
-                        ;; prints out the positions
-                        (indices-to-labels position)
+                    
 
     
                         (let* 
@@ -559,16 +458,9 @@
     )
 )
 
-(defun run-game(hPrevscores cPrevscores board colors)
-    (let* 
-        (
-            ;; (list board hColor cColor hCPScore cCPScore hFiveScore cFiveScore )
-            ;; (first '(B)) because the second player is always black
-            (gamelist (playgame (update-board board  9 10 (first '(W))) (first colors) (first (rest colors)) (first '(B)) 1 0 0 0 0 hPrevscores cPrevscores))          
-        )
-
+(defun run-game(hPrevscores cPrevscores board colors gamelist)
             (cond 
-                ((not gameList)
+                ((not gamelist)
                     (format t "Game saved and quitted!")
                     (terpri)
                 )
@@ -584,20 +476,20 @@
                             (h4ConsCount 
                                 (cond 
                                     ((equal hFiveScore 5)
-                                        (- (total-four-consecutive (first gamelist)  (first '(W))) 1)
+                                        (- (total-four-consecutive (first gamelist)  (first colors)) 1)
                                     )
                                     (t 
-                                        (total-four-consecutive (first gamelist)  (first '(W)))
+                                        (total-four-consecutive (first gamelist)  (first colors))
                                     )
                                 )
                             ) 
                             (c4ConsCount 
                                 (cond 
                                     ((equal cFiveScore 5)
-                                        (- (total-four-consecutive (first gamelist)  (first '(B)) ) 1)
+                                        (- (total-four-consecutive (first gamelist)  (first (rest colors)) ) 1)
                                     )
                                     (t 
-                                        (total-four-consecutive (first gamelist)  (first '(B)) )
+                                        (total-four-consecutive (first gamelist)  (first (rest colors)) )
                                     )
                                 )
                             ) 
@@ -632,12 +524,7 @@
                         )
                     )
                 )
-            )
-
-            
-           
-    )
-   
+            )   
 )
 
 ;; captures the pairs for real

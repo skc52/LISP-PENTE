@@ -132,7 +132,12 @@
 (defun ask-user-position-input ()
     (format t "Enter the position where you want to put your piece. Follow the format A10, K1, etc~%")
     (let ((user-choice (read-line)))
-        ;; (format t "You entered ~a" user-choice)           
+        ;; (format t "You entered ~a" user-choice) 
+        ;; (cond 
+        ;;     ((string= (string-trim " " user-choice) "")
+        ;;         (ask-user-position-input )
+        ;;     )
+        ;; )          
         user-choice
     )
 
@@ -172,12 +177,13 @@
         (input-length (length user-input))
 
 
-        (col-label (char user-input 0))
-        (row-label (subseq user-input 1)))
+        )
 
    
     ;;  if invalid length
     (cond 
+       
+
         ((> input-length 3)
             (print "Input Length cannot be more than 3. ")
             (terpri)
@@ -190,41 +196,49 @@
         )
         (t 
         ;; if invalid row
-            (cond 
-                ;; TODO check if the row input is strictly numeric      
-                ((not (is-numeric-string row-label))
-                    (print "Row value must be numeric")
-                    (terpri)
-                    ()
+
+            (let* 
+                (
+                    (col-label (char user-input 0))
+                     (row-label (subseq user-input 1))
                 )
-
-                ;; Col input validation is fine
-
-
-                ((not (<= 1 (parse-integer row-label) 19))
-                    (print "Invalid row input.")
-                    (terpri)
-                    ;; return nil
-                    ()
-                )
-                (t 
-                    ;; if invalid column
-                    (cond 
-                        ((not (or (<= (char-code #\a) (char-code col-label)  (char-code #\s)) (<= (char-code #\A) (char-code col-label)  (char-code #\S)) ))
-                            (print "Invalid Column Input.")
-                            (terpri)
-                            ;; return nil
-                            ()
-                        )
-
-                        
-
-                        (t 
-                            t
-                        )  
-                    
+           
+                (cond 
+                    ;; TODO check if the row input is strictly numeric      
+                    ((not (is-numeric-string row-label))
+                        (print "Row value must be numeric")
+                        (terpri)
+                        ()
                     )
 
+                    ;; Col input validation is fine
+
+
+                    ((not (<= 1 (parse-integer row-label) 19))
+                        (print "Invalid row input.")
+                        (terpri)
+                        ;; return nil
+                        ()
+                    )
+                    (t 
+                        ;; if invalid column
+                        (cond 
+                            ((not (or (<= (char-code #\a) (char-code col-label)  (char-code #\s)) (<= (char-code #\A) (char-code col-label)  (char-code #\S)) ))
+                                (print "Invalid Column Input.")
+                                (terpri)
+                                ;; return nil
+                                ()
+                            )
+
+                            
+
+                            (t 
+                                t
+                            )  
+                        
+                        )
+
+                    )
                 )
             )
 

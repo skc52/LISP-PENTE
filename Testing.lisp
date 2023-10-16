@@ -1,7 +1,7 @@
 
 
 ;; (load "utility.lisp")
-(load "Board.lisp")
+(load "Board.lsp")
 ;; (load "Strategy.lisp")
 
 ;; (let ((pente-board '((O O O O O O O O O O O O O O O O O O O)

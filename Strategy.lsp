@@ -1,7 +1,7 @@
 ;; we are creating a board of priorities
 
-(load "Board.lisp")
-(load "utility.lisp")
+(load "Board.lsp")
+(load "utility.lsp")
 ;; (load "Round.lisp")
 ;; check four consecutive possibility
     ;; both ends open, high priority
@@ -223,7 +223,7 @@
                     (newPriority (first priority-reason))
                     (reason (first (rest priority-reason)))
                 )
-
+                ;; (print newPriority)
                 (cond 
                     ((> newPriority (get-color pboard x y))
                         (set-priority-based-on-3-cons (update-board rboard x y reason) (update-board pboard x y newPriority) board x (+ y 1) ownColor)
@@ -446,8 +446,8 @@
             (enemyFourScore (total-four-consecutive board enemyColor))
             (pboard (create-board-priority 20))
             (rboard (create-board-reasons 20))
+
             (prboard (set-priority-based-on-5-cons rboard pboard board 0 1 ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore fourScore enemyFourScore))
-    
             (pboard (first prboard))
             (rboard (first (rest prboard)))
             (prboard (set-priority-based-on-4-cons rboard pboard board 0 1 ownColor))
@@ -462,17 +462,13 @@
             (prboard (set-priority-based-on-2-cons rboard pboard board 0 1 ownColor))
             (pboard (first prboard))
             (rboard (first (rest prboard)))
-            ;; (pboard (set-priority-based-on-3-cons pboard board 0 1 ownColor))
-            ;; (pboard (set-priority-based-on-2-cons pboard board 0 1 ownColor))
 
-            ;; now from enemy's point of view
-            ;; (prboard (set-priority-based-on-5-cons rboard pboard board 0 1 enemyColor enemyPairsCaptured pairsCaptured enemyTotalScore totalScore enemyFourScore fourScore))
-            ;; (pboard (first prboard))
-            ;; (rboard (first (rest prboard)))
-            ;; (pboard (set-priority-based-on-4-cons pboard board 0 1 enemyColor))
-            ;; (pboard (set-priority-based-on-pairs-captured pboard board 0 1 enemyColor enemyPairsCaptured pairsCaptured enemyTotalScore totalScore enemyFourScore fourScore ))
-            ;; (pboard (set-priority-based-on-3-cons pboard board 0 1 enemyColor))
-            ;; (pboard (set-priority-based-on-2-cons pboard board 0 1 enemyColor))
+            ;; what is the best priority and best position till now?
+            ;; if any of these two change we add stop opponent in front of the reason
+            (bestPosTillNow (get-best-position rboard pboard -1 -1 -1 0 1 board 3))
+            (bestPriorityTillNow (get-color pboard (first bestPosTillNow) (first (rest bestPosTillNow))))
+
+            ;;now determine priorities and best pos for opponent 
             (prboard (set-priority-based-on-5-cons rboard pboard board 0 1 enemyColor enemyPairsCaptured pairsCaptured enemyTotalScore totalScore enemyFourScore fourScore))    
             (pboard (first prboard))
             (rboard (first (rest prboard)))
@@ -488,11 +484,23 @@
             (prboard (set-priority-based-on-2-cons rboard pboard board 0 1 enemyColor))
             (pboard (first prboard))
             (rboard (first (rest prboard)))
+            
+            (newBestPos (get-best-position rboard pboard -1 -1 -1 0 1 board 3))
+            (newbestPriority (get-color pboard (first bestPosTillNow) (first (rest bestPosTillNow))))
+
+            (finalReason (cond 
+                ((and (equal bestPosTillNow newBestPos) (equal bestPriorityTillNow newbestPriority))
+                    "Reason:"
+                )
+                (t 
+                    "Reason: Stop opponent"
+                )
+            ))
 
             
         )
-        ;; (print-board rboard)
-        (list pboard rboard)
+        ;; (print-board pboard)
+        (list pboard rboard finalReason)
     )
 )
 
@@ -554,7 +562,7 @@
                     ( choose-randomly pboard board turn)
                 )
                 (t
-                    (print (get-color rboard bestX bestY))
+                    ;; (print (get-color rboard bestX bestY))
                     (terpri)
                     (list bestX bestY)
                 )
@@ -604,19 +612,14 @@
         (
             (prboard (setOwnPriority board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore))
             (best-position (get-best-position (first (rest prboard)) (first prboard) -1 -1 -1 0 1 board turn))
-
-            ;; convert best position to labels
-            ;; (row (first best-position))
-            ;; (col (first (rest best-position)))
-            ;; (row-label ( - 19 row))
-            ;; (col-label (code-char (+ (+ (- col 1) (char-code #\A)))))
-            
         )
-
-        (print (get-color (first (rest prboard)) (first best-position) (first (rest best-position))))
-         (format t "Suggested position is " )
-         (indices-to-labels best-position)
-         (terpri)
+        ;; (print-board (first prboard))
+        ;; (format t "~A ~A" (first (rest (rest prboard))) (get-color (first (rest prboard)) (first best-position) (first (rest best-position))))
+        (format t "Suggested position is " )
+        (indices-to-labels best-position)
+        (terpri)
+        (format t "~A ~A" (first (rest (rest prboard))) (get-color (first (rest prboard)) (first best-position) (first (rest best-position))))
+        (terpri)
 
     )
 
@@ -627,34 +630,34 @@
 ;; TESTING setOwnPriority
 (let* 
     (
-        (board '((O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O W B B O O)
-            (O O O O O O O O O O O O O O O O O B B O)
-            (O O O O O O O O O O O W O O O O B O B O)
-            (O O O O O O O O B W W O W B O W B W W O)
-            (O O O O O O O O O O O W O O O O B O O O)
-            (O O O O O O O O O O O W O O O O O O O O)
+        (board '((O B B O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
-            (O O O B O W W B O O O O O O O O O O O O)
-            (O O O O O O O O W W O W W W O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O)
-            (O O O O O W O O O O O O O O O O O O O O)
-            (O O O O O W O O O O O O O O O O O O O O)
-            (O O W W W O O O O O O O O O O O O O O O)
-            (O O O O O W O O O O O O O O O O O W O O)
-            (O O O O O W O O O O O O O O O O O O O O)
-            (O O O O O O O O O O O O O O O O O W O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O W O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O B B W W O O O)
+            (O O O O O O O O O O O O O O W O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
+            (O O O O O O O O O O O O O O O O O O O O)
             (O O O O O O O O O O O O O O O O O O O O))
         )
         ;; (defun setOwnPriority (board ownColor pairsCaptured enemyPairsCaptured totalScore enemyTotalScore)
 
-        (pboard (setOwnPriority board (first '(W)) 2 1 1 4))
+        ;; (pboard (first (setOwnPriority board (first '(W)) 2 1 1 4)))
     )
     ;; (print-board pboard)
     ;; (print (get-best-position pboard -1 -1 -1 0 1 board 3))
 
-    ;; (give-suggestion board (first '(W)) 2 1 1 4 0)
+    (give-suggestion board (first '(W)) 2 1 1 4 0)
     
 
 

@@ -59,10 +59,7 @@
                       )
                     )
               )
-              ;; TODO take out board labels
 
-              ;; IMPORTANT i commented this out because i could not include comments as expected in the gamefile
-              ;; (game-state (list board-cmnt (take-out-labels board) human-cmnt hCPair hTotScore computer-cmnt cCPair CTotScore next-player-cmnt nextPlayer nextPlayerColorName))
               (game-state (list (take-out-labels board)  hCPair hTotScore  cCPair CTotScore  nextPlayer nextPlayerColorName))
 
             )
